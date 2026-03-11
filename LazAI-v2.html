@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LazAI - by Lazaro John Mkalagale</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Share Tech Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #00FFCC;
+    --secondary: #0066FF;
+    --dark: #020810;
+    --card: #060F1A;
+    --border: #0A2040;
+    --text: #B0D4F0;
+    --muted: #3A6080;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--dark); color: var(--text); font-family: 'Exo 2', sans-serif; min-height: 100vh; overflow: hidden; }
+
+  .robot-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.06; display: flex; align-items: center; justify-content: center; }
+  .circuit { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px); background-size: 50px 50px; }
+  .particle { position: fixed; border-radius: 50%; pointer-events: none; animation: floatUp linear infinite; z-index: 0; }
+  @keyframes floatUp { 0% { transform: translateY(100vh); opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.3; } 100% { transform: translateY(-50px); opacity: 0; } }
+
+  /* KEY SCREEN */
+  #keyScreen {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(2,8,16,0.98);
+  }
+
+  .key-box {
+    width: 100%; max-width: 380px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 30px 22px;
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .key-logo {
+    width: 72px; height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900;
+    font-family: 'Share Tech Mono', monospace;
+    color: #020810; margin: 0 auto 16px;
+    box-shadow: 0 0 30px rgba(0,255,204,0.5);
+    animation: logoPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes logoPulse { 0%,100% { box-shadow: 0 0 30px rgba(0,255,204,0.4); } 50% { box-shadow: 0 0 50px rgba(0,255,204,0.8); } }
+
+  .key-title {
+    font-size: 26px; font-weight: 900; letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 4px;
+  }
+
+  .key-owner {
+    font-size: 10px; color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px; margin-bottom: 24px;
+  }
+
+  .key-label {
+    font-size: 11px; color: var(--primary);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px; text-align: left; margin-bottom: 8px;
+  }
+
+  .key-input {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #fff; font-size: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    outline: none; margin-bottom: 8px;
+    transition: border-color 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .key-input:focus { border-color: rgba(0,255,204,0.5); box-shadow: 0 0 15px rgba(0,255,204,0.08); }
+  .key-input::placeholder { color: var(--muted); font-size: 11px; }
+
+  .key-hint {
+    font-size: 11px; color: var(--muted);
+    text-align: left; margin-bottom: 20px;
+    line-height: 1.6;
+    background: rgba(255,136,0,0.06);
+    border: 1px solid rgba(255,136,0,0.15);
+    border-radius: 10px; padding: 10px 12px;
+  }
+
+  .key-btn {
+    width: 100%; padding: 15px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none; border-radius: 14px;
+    color: #020810; font-size: 16px; font-weight: 700;
+    font-family: 'Exo 2', sans-serif;
+    cursor: pointer; letter-spacing: 1px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(0,255,204,0.3);
+  }
+
+  .key-btn:active { transform: scale(0.97); }
+
+  .key-error {
+    color: #FF4444; font-size: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    margin-top: 10px; display: none;
+  }
+
+  .show-hide {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 16px;
+  }
+
+  .input-wrap { position: relative; }
+
+  /* MAIN APP */
+  #mainApp {
+    position: relative; z-index: 1;
+    max-width: 440px; margin: 0 auto;
+    height: 100vh; display: none; flex-direction: column;
+  }
+
+  header { padding: 14px 18px; background: rgba(2,8,16,0.9); backdrop-filter: blur(30px); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+  header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent); animation: scan 3s linear infinite; }
+  @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+  .header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .logo-ring { width: 48px; height: 48px; border-radius: 13px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; font-family: 'Share Tech Mono', monospace; color: #020810; box-shadow: 0 0 20px rgba(0,255,204,0.35); flex-shrink: 0; animation: logoPulse 3s ease-in-out infinite; }
+  .logo-text-big { font-size: 22px; font-weight: 900; letter-spacing: 2px; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header-name { font-size: 10px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+  .header-right { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+  .online-badge { display: flex; align-items: center; gap: 5px; font-size: 10px; font-family: 'Share Tech Mono', monospace; color: var(--primary); }
+  .online-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary); animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .stats-bar { display: flex; background: rgba(10,32,64,0.5); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+  .stat { flex: 1; padding: 5px 8px; text-align: center; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-val { color: var(--primary); font-size: 12px; font-weight: 700; display: block; font-family: 'Share Tech Mono', monospace; }
+  .stat-label { color: var(--muted); font-size: 8px; font-family: 'Share Tech Mono', monospace; }
+
+  .chat-area { flex: 1; padding: 14px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .chat-area::-webkit-scrollbar { width: 3px; }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .message { display: flex; gap: 9px; animation: msgIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .message.user { flex-direction: row-reverse; }
+
+  .avatar { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; font-family: 'Share Tech Mono', monospace; flex-shrink: 0; margin-top: 4px; }
+  .avatar.ai { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #020810; box-shadow: 0 0 12px rgba(0,255,204,0.25); }
+  .avatar.user { background: rgba(0,102,255,0.15); border: 1px solid rgba(0,102,255,0.3); color: #4488FF; }
+
+  .bubble { max-width: 77%; padding: 10px 14px; border-radius: 15px; font-size: 13.5px; line-height: 1.65; }
+  .message.ai .bubble { background: rgba(6,15,26,0.92); border: 1px solid var(--border); border-top-left-radius: 4px; }
+  .message.user .bubble { background: rgba(0,40,100,0.6); border: 1px solid rgba(0,102,255,0.3); border-top-right-radius: 4px; color: #D0E8FF; }
+
+  .msg-label { font-size: 9px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1.5px; margin-bottom: 4px; text-transform: uppercase; }
+  .msg-label.ai-label { color: var(--primary); }
+  .msg-label.user-label { color: #4488FF; text-align: right; }
+  .msg-time { font-size: 9px; color: var(--muted); font-family: 'Share Tech Mono', monospace; margin-top: 4px; text-align: right; }
+
+  .typing-bubble { background: rgba(6,15,26,0.92); border: 1px solid var(--border); border-radius: 15px; border-top-left-radius: 4px; padding: 13px 16px; display: flex; gap: 5px; align-items: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 6px var(--primary); animation: dotBounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; background: #00AAFF; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dotBounce { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-7px); opacity: 1; } }
+
+  .quick-wrap { padding: 0 16px 8px; display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; }
+  .quick-wrap::-webkit-scrollbar { display: none; }
+  .qbtn { white-space: nowrap; padding: 7px 13px; background: rgba(10,32,64,0.8); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 11px; font-family: 'Exo 2', sans-serif; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+  .qbtn:hover { background: rgba(0,255,204,0.08); border-color: rgba(0,255,204,0.4); color: var(--primary); }
+
+  .input-area { padding: 10px 16px 18px; background: rgba(2,8,16,0.92); backdrop-filter: blur(30px); border-top: 1px solid var(--border); }
+  .input-row { display: flex; gap: 9px; align-items: flex-end; }
+  .input-box { flex: 1; background: rgba(10,32,64,0.6); border: 1px solid var(--border); border-radius: 13px; padding: 11px 15px; color: #fff; font-size: 13.5px; font-family: 'Exo 2', sans-serif; outline: none; resize: none; min-height: 44px; max-height: 110px; line-height: 1.5; transition: border-color 0.2s; }
+  .input-box::placeholder { color: var(--muted); }
+  .input-box:focus { border-color: rgba(0,255,204,0.3); }
+  .send-btn { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,255,204,0.25); flex-shrink: 0; }
+  .send-btn:active { transform: scale(0.93); }
+
+  .footer { text-align: center; padding: 5px; font-size: 9px; font-family: 'Share Tech Mono', monospace; color: var(--border); letter-spacing: 2px; }
+  .footer span { color: var(--muted); }
+
+  /* Reset key button */
+  .reset-key { position: absolute; top: 14px; right: 18px; background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 10px; font-family: 'Share Tech Mono', monospace; padding: 4px 8px; cursor: pointer; z-index: 10; }
+  .reset-key:active { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="robot-bg">
+  <svg viewBox="0 0 800 900" xmlns="http://www.w3.org/2000/svg">
+    <rect x="280" y="120" width="240" height="200" rx="30" fill="none" stroke="#00FFCC" stroke-width="3"/>
+    <rect x="315" y="175" width="70" height="50" rx="10" fill="none" stroke="#00FFCC" stroke-width="2.5"/>
+    <rect x="415" y="175" width="70" height="50" rx="10" fill="none" stroke="#00FFCC" stroke-width="2.5"/>
+    <circle cx="350" cy="200" r="18" fill="#00FFCC" opacity="0.2"/><circle cx="450" cy="200" r="18" fill="#00FFCC" opacity="0.2"/>
+    <circle cx="350" cy="200" r="8" fill="#00FFCC"/><circle cx="450" cy="200" r="8" fill="#00FFCC"/>
+    <rect x="310" y="265" width="180" height="30" rx="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="320" y="272" width="20" height="16" rx="3" fill="#00FFCC" opacity="0.6"/>
+    <rect x="348" y="272" width="20" height="16" rx="3" fill="#00FFCC" opacity="0.3"/>
+    <rect x="376" y="272" width="20" height="16" rx="3" fill="#00FFCC" opacity="0.6"/>
+    <rect x="404" y="272" width="20" height="16" rx="3" fill="#00FFCC" opacity="0.3"/>
+    <rect x="432" y="272" width="20" height="16" rx="3" fill="#00FFCC" opacity="0.6"/>
+    <line x1="350" y1="120" x2="330" y2="70" stroke="#00FFCC" stroke-width="2"/>
+    <circle cx="330" cy="65" r="8" fill="none" stroke="#00FFCC" stroke-width="2"/><circle cx="330" cy="65" r="3" fill="#00FFCC"/>
+    <line x1="450" y1="120" x2="470" y2="70" stroke="#00FFCC" stroke-width="2"/>
+    <circle cx="470" cy="65" r="8" fill="none" stroke="#00FFCC" stroke-width="2"/><circle cx="470" cy="65" r="3" fill="#00FFCC"/>
+    <rect x="245" y="155" width="35" height="60" rx="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="520" y="155" width="35" height="60" rx="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="370" y="320" width="60" height="40" rx="5" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="230" y="360" width="340" height="260" rx="20" fill="none" stroke="#00FFCC" stroke-width="3"/>
+    <circle cx="400" cy="440" r="35" fill="none" stroke="#0066FF" stroke-width="2"/>
+    <circle cx="400" cy="440" r="22" fill="none" stroke="#00FFCC" stroke-width="1.5"/>
+    <circle cx="400" cy="440" r="10" fill="#00FFCC" opacity="0.4"/>
+    <rect x="130" y="370" width="95" height="200" rx="20" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="575" y="370" width="95" height="200" rx="20" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="295" y="620" width="90" height="180" rx="15" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="415" y="620" width="90" height="180" rx="15" fill="none" stroke="#00FFCC" stroke-width="2"/>
+  </svg>
+</div>
+<div class="circuit"></div>
+<div id="particles"></div>
+
+<!-- KEY INPUT SCREEN -->
+<div id="keyScreen">
+  <div class="key-box">
+    <div class="key-logo">LazAI</div>
+    <div class="key-title">LazAI</div>
+    <div class="key-owner">BY LAZARO JOHN MKALAGALE • 🇹🇿</div>
+
+    <div class="key-label">🔑 WEKA API KEY YAKO:</div>
+    <div class="input-wrap">
+      <input type="password" class="key-input" id="apiInput"
+        placeholder="sk-ant-api03-..."/>
+      <button class="show-hide" onclick="toggleShow()">👁️</button>
+    </div>
+
+    <div class="key-hint">
+      ⚠️ Key yako inahifadhiwa kwenye simu yako tu ndani ya session hii. Haiendi popote!
+    </div>
+
+    <button class="key-btn" onclick="startLazAI()">⚡ WASHA LAZAI</button>
+    <div class="key-error" id="keyError">❌ Weka API Key sahihi inayoanza na "sk-"</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+  <header>
+    <button class="reset-key" onclick="resetKey()">🔑 Key</button>
+    <div class="header-top">
+      <div class="logo-ring">LazAI</div>
+      <div>
+        <div class="logo-text-big">LazAI</div>
+        <div class="header-name">by Lazaro John Mkalagale</div>
+      </div>
+      <div class="header-right">
+        <div class="online-badge"><div class="online-dot"></div>ONLINE</div>
+        <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;">v1.0 • TZ</div>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="msgCount">0</span><span class="stat-label">MAZUNGUMZO</span></div>
+      <div class="stat"><span class="stat-val">24/7</span><span class="stat-label">HUDUMA</span></div>
+      <div class="stat"><span class="stat-val">🇹🇿</span><span class="stat-label">TANZANIA</span></div>
+      <div class="stat"><span class="stat-val" style="color:#0066FF">AI</span><span class="stat-label">ENGINE</span></div>
+    </div>
+  </header>
+
+  <div class="chat-area" id="chatArea">
+    <div class="message ai">
+      <div class="avatar ai">LAZ</div>
+      <div class="bubble">
+        <div class="msg-label ai-label">LAZAI SYSTEM</div>
+        Habari! Mimi ni <strong>LazAI</strong> — msaidizi wako wa akili bandia, nilioundwa na <strong>Lazaro John Mkalagale</strong>. 🤖<br><br>
+        Niko tayari kukusaidia na chochote — maswali, habari, hesabu, tafsiri na zaidi! Niulize! 🇹🇿
+        <div class="msg-time" id="welcomeTime"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-wrap">
+    <button class="qbtn" onclick="sendQuick('Habari za Tanzania leo')">🇹🇿 Habari TZ</button>
+    <button class="qbtn" onclick="sendQuick('Nisaidie kuandika barua pepe ya biashara')">✉️ Barua pepe</button>
+    <button class="qbtn" onclick="sendQuick('Tafsiri kwa Kiingereza: Habari ya asubuhi')">🌐 Tafsiri</button>
+    <button class="qbtn" onclick="sendQuick('Nifundishe Python kidogo')">💻 Python</button>
+    <button class="qbtn" onclick="sendQuick('Nisaidie na biashara yangu ndogo')">💼 Biashara</button>
+    <button class="qbtn" onclick="sendQuick('Niambie kuhusu LazAI')">🤖 Kuhusu</button>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <textarea class="input-box" id="userInput"
+        placeholder="Uliza LazAI chochote..." rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+  <div class="footer">LAZAI v1.0 • <span>LAZARO JOHN MKALAGALE</span> • MADE IN 🇹🇿</div>
+</div>
+
+<script>
+let API_KEY = '';
+let isTyping = false;
+let msgCount = 0;
+const history = [];
+
+// Particles
+(function(){
+  const c = document.getElementById('particles');
+  for(let i=0;i<12;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const s = Math.random()*3+2;
+    const cols = ['#00FFCC','#0066FF','#00AAFF'];
+    p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*3)]};animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*8}s;`;
+    c.appendChild(p);
+  }
+})();
+
+document.getElementById('welcomeTime').textContent = getTime();
+
+function getTime(){
+  return new Date().toLocaleTimeString('sw-TZ',{hour:'2-digit',minute:'2-digit'});
+}
+
+function toggleShow(){
+  const inp = document.getElementById('apiInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function startLazAI(){
+  const key = document.getElementById('apiInput').value.trim();
+  const err = document.getElementById('keyError');
+  if(!key || !key.startsWith('sk-')){
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  API_KEY = key;
+  document.getElementById('keyScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'flex';
+}
+
+function resetKey(){
+  API_KEY = '';
+  document.getElementById('apiInput').value = '';
+  document.getElementById('keyScreen').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,110)+'px';
+}
+
+function handleKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+}
+
+function sendQuick(text){
+  document.getElementById('userInput').value=text;
+  sendMessage();
+}
+
+async function sendMessage(){
+  if(isTyping) return;
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value='';
+  input.style.height='auto';
+  addMessage('user',text);
+  history.push({role:'user',content:text});
+  showTyping();
+  isTyping=true;
+  try{
+    const reply = await callAPI();
+    hideTyping();
+    history.push({role:'assistant',content:reply});
+    addMessage('ai',reply);
+    msgCount++;
+    document.getElementById('msgCount').textContent=msgCount;
+  }catch(e){
+    hideTyping();
+    addMessage('ai','Samahani, kuna tatizo. Hakikisha key yako ni sahihi kisha jaribu tena! 🙏');
+  }
+  isTyping=false;
+}
+
+async function callAPI(){
+  const res = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      system:`Wewe ni LazAI — msaidizi wa AI uliotengenezwa na Lazaro John Mkalagale kutoka Tanzania. Daima jibu kwa Kiswahili safi na wazi. Uwe wa kusaidia na wa kirafiki. Jitambulishe kama LazAI ukiulizwa. Mtengenezaji wako ni Lazaro John Mkalagale. Tumia emoji kidogo. Jibu kwa ufupi lakini kamili.`,
+      messages: history
+    })
+  });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.content[0].text;
+}
+
+function addMessage(type,text){
+  const chat = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className=`message ${type}`;
+  div.innerHTML=`
+    <div class="avatar ${type}">${type==='ai'?'LAZ':'YOU'}</div>
+    <div class="bubble">
+      <div class="msg-label ${type==='ai'?'ai-label':'user-label'}">${type==='ai'?'LAZAI':'WEWE'}</div>
+      ${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}
+      <div class="msg-time">${getTime()}</div>
+    </div>`;
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function showTyping(){
+  const chat=document.getElementById('chatArea');
+  const div=document.createElement('div');
+  div.className='message ai';
+  div.id='typing';
+  div.innerHTML=`<div class="avatar ai">LAZ</div><div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function hideTyping(){
+  const t=document.getElementById('typing');
+  if(t) t.remove();
+}
+</script>
+</body>
+</html>
