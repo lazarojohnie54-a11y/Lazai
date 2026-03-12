@@ -1,0 +1,37 @@
+{
+  "name": "LazAI PRO",
+  "short_name": "LazAI",
+  "description": "AI ya Kiswahili na Tanzania - by Lazaro John Mkalagale",
+  "start_url": "/Lazai/LazAI-Pro.html",
+  "scope": "/Lazai/",
+  "display": "standalone",
+  "background_color": "#030810",
+  "theme_color": "#00F5CC",
+  "orientation": "portrait-primary",
+  "lang": "sw",
+  "categories": ["productivity", "utilities", "education"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Chat na AI",
+      "short_name": "Chat",
+      "description": "Fungua chat ya AI",
+      "url": "/Lazai/LazAI-Pro.html",
+      "icons": [{"src": "icon-192.png", "sizes": "192x192"}]
+    }
+  ]
+}
