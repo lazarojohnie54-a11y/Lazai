@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LazAI PRO — by Lazaro John Mkalagale</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020C14;--card:#061220;--border:#0A2A40;
+  --primary:#00FFCC;--secondary:#0088FF;--gold:#FFD700;
+  --text:#A0C8E8;--muted:#1E4060;--red:#FF4444;--green:#00FF88;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow:hidden;}
+
+/* ── LOCK SCREEN ── */
+#lockScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+.lock-logo{font-size:64px;margin-bottom:8px;}
+.lock-title{font-size:24px;font-weight:900;color:var(--primary);letter-spacing:3px;margin-bottom:4px;}
+.lock-sub{font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:2px;margin-bottom:32px;}
+.lock-inp{width:100%;max-width:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;color:#fff;font-size:16px;font-family:'Exo 2',sans-serif;outline:none;text-align:center;letter-spacing:4px;margin-bottom:12px;}
+.lock-inp:focus{border-color:rgba(0,255,204,0.4);}
+.lock-btn{width:100%;max-width:320px;padding:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:12px;color:#020C14;font-size:15px;font-weight:900;font-family:'Exo 2',sans-serif;cursor:pointer;letter-spacing:2px;}
+.lock-err{font-size:12px;color:var(--red);text-align:center;height:18px;margin-top:4px;font-family:'Share Tech Mono',monospace;}
+
+/* ── APP SHELL ── */
+#app{display:flex;flex-direction:column;height:100%;display:none;}
+
+/* Header */
+.header{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(6,18,32,0.95);border-bottom:1px solid var(--border);flex-shrink:0;backdrop-filter:blur(8px);}
+.hdr-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#020C14;font-family:'Share Tech Mono',monospace;flex-shrink:0;}
+.hdr-body{flex:1;}
+.hdr-title{font-size:16px;font-weight:900;color:#fff;letter-spacing:1px;}
+.hdr-title span{color:var(--primary);}
+.hdr-sub{font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+.hdr-status{display:flex;align-items:center;gap:5px;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.status-txt{font-size:9px;color:var(--green);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+
+/* Tabs */
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;}
+.tab{flex:1;padding:10px 4px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;border-bottom:2px solid transparent;transition:all 0.2s;}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-icon{font-size:16px;display:block;margin-bottom:2px;}
+
+/* Panels */
+.panel{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.panel.active{display:flex;}
+
+/* ── CHAT PANEL ── */
+.msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+.msgs::-webkit-scrollbar{width:3px;}
+.msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.msg{max-width:82%;display:flex;flex-direction:column;gap:3px;}
+.msg.user{align-self:flex-end;align-items:flex-end;}
+.msg.bot{align-self:flex-start;align-items:flex-start;}
+.msg-label{font-size:8px;font-family:'Share Tech Mono',monospace;letter-spacing:1px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.msg-label .bot-av{width:16px;height:16px;border-radius:5px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:inline-flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;color:#020C14;}
+.msg-bubble{padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.65;word-break:break-word;}
+.msg.user .msg-bubble{background:linear-gradient(135deg,rgba(0,136,255,0.25),rgba(0,255,204,0.12));border:1px solid rgba(0,255,204,0.2);border-bottom-right-radius:4px;color:#fff;}
+.msg.bot .msg-bubble{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;}
+.msg-time{font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;}
+.typing{display:flex;gap:4px;align-items:center;padding:10px 13px;background:var(--card);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;width:fit-content;}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--primary);animation:typDot 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:0.2s;}
+.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes typDot{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-4px);opacity:1}}
+
+/* Quick prompts */
+.quick-wrap{padding:8px 10px;display:flex;gap:6px;overflow-x:auto;flex-shrink:0;border-top:1px solid var(--border);}
+.quick-wrap::-webkit-scrollbar{display:none;}
+.qpill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:'Exo 2',sans-serif;}
+.qpill:active{border-color:var(--primary);color:var(--primary);}
+
+/* Input bar */
+.input-bar{display:flex;gap:8px;padding:10px 12px;background:rgba(6,18,32,0.95);border-top:1px solid var(--border);flex-shrink:0;}
+.chat-inp{flex:1;background:rgba(10,32,60,0.7);border:1px solid var(--border);border-radius:12px;padding:10px 14px;color:#fff;font-size:14px;font-family:'Exo 2',sans-serif;outline:none;resize:none;max-height:80px;}
+.chat-inp:focus{border-color:rgba(0,255,204,0.35);}
+.chat-inp::placeholder{color:var(--muted);}
+.send-btn{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;align-self:flex-end;}
+.send-btn:active{transform:scale(0.92);}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* ── SEARCH PANEL ── */
+.search-body{flex:1;overflow-y:auto;padding:14px;}
+.search-inp-wrap{display:flex;gap:8px;margin-bottom:14px;}
+.search-inp{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;font-family:'Exo 2',sans-serif;outline:none;}
+.search-inp:focus{border-color:rgba(0,255,204,0.35);}
+.search-inp::placeholder{color:var(--muted);}
+.search-btn{padding:12px 18px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:12px;color:#020C14;font-weight:900;font-size:14px;cursor:pointer;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;}
+.result-title{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:4px;}
+.result-url{font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-bottom:6px;}
+.result-desc{font-size:12px;line-height:1.6;}
+.result-link{font-size:11px;color:var(--secondary);text-decoration:none;margin-top:4px;display:inline-block;}
+.no-result{text-align:center;padding:40px 20px;color:var(--muted);}
+
+/* ── IMAGE PANEL ── */
+.img-body{flex:1;overflow-y:auto;padding:14px;}
+.img-inp-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.img-inp{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:#fff;font-size:14px;font-family:'Exo 2',sans-serif;outline:none;resize:none;height:70px;}
+.img-inp:focus{border-color:rgba(0,255,204,0.35);}
+.img-inp::placeholder{color:var(--muted);}
+.img-gen-btn{padding:13px;background:linear-gradient(135deg,#BF00FF,#FF2D6B);border:none;border-radius:12px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;letter-spacing:1px;}
+.img-result{text-align:center;}
+.img-result img{width:100%;border-radius:14px;border:1px solid var(--border);}
+.img-placeholder{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:40px 20px;text-align:center;color:var(--muted);}
+.img-placeholder .big{font-size:48px;display:block;margin-bottom:8px;}
+.img-style-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;}
+.img-style-row::-webkit-scrollbar{display:none;}
+.style-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--text);}
+.style-pill.sel{border-color:var(--primary);color:var(--primary);background:rgba(0,255,204,0.08);}
+
+/* ── ERROR TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1A0A0A;border:1px solid var(--red);border-radius:10px;padding:10px 16px;font-size:12px;color:var(--red);font-family:'Share Tech Mono',monospace;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;max-width:90%;text-align:center;}
+.toast.show{opacity:1;}
+
+/* Token counter */
+.token-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 14px;background:rgba(6,18,32,0.8);border-top:1px solid var(--border);flex-shrink:0;}
+.token-txt{font-size:8px;color:var(--muted);font-family:'Share Tech Mono',monospace;}
+.token-pct{font-size:8px;font-family:'Share Tech Mono',monospace;color:var(--green);}
+.clear-btn{font-size:9px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Share Tech Mono',monospace;padding:2px 6px;}
+.clear-btn:active{color:var(--red);}
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen">
+  <div class="lock-logo">🤖</div>
+  <div class="lock-title">LazAI PRO</div>
+  <div class="lock-sub">BY LAZARO JOHN MKALAGALE 🇹🇿</div>
+  <input class="lock-inp" id="pwdInp" type="password" placeholder="••••••••" maxlength="20"
+    onkeydown="if(event.key==='Enter')checkPwd()">
+  <button class="lock-btn" onclick="checkPwd()">🔓 INGIA</button>
+  <div class="lock-err" id="lockErr"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="hdr-logo">LAZ</div>
+    <div class="hdr-body">
+      <div class="hdr-title">LazAI <span>PRO</span></div>
+      <div class="hdr-sub">by Lazaro John Mkalagale 🇹🇿</div>
+    </div>
+    <div class="hdr-status">
+      <div class="status-dot"></div>
+      <div class="status-txt">GROQ<br>ONLINE</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('chat')"><span class="tab-icon">💬</span>CHAT</div>
+    <div class="tab" onclick="switchTab('search')"><span class="tab-icon">🔍</span>TAFUTA</div>
+    <div class="tab" onclick="switchTab('image')"><span class="tab-icon">🎨</span>PICHA</div>
+  </div>
+
+  <!-- CHAT PANEL -->
+  <div class="panel active" id="panelChat">
+    <div class="msgs" id="msgs">
+      <div class="msg bot">
+        <div class="msg-label"><span class="bot-av">L</span> LAZAI PRO</div>
+        <div class="msg-bubble">Habari! Mimi ni <strong>LazAI PRO</strong> — AI yako ya Kiswahili! 🇹🇿<br><br>Ninaweza kukusaidia na maswali yoyote, kuandika, kutafsiri, kuhesabu, na zaidi. Uliza chochote! 🚀</div>
+        <div class="msg-time" id="initTime"></div>
+      </div>
+    </div>
+    <div class="token-bar">
+      <span class="token-txt" id="tokenTxt">Historia: 0 ujumbe</span>
+      <button class="clear-btn" onclick="clearHistory()">🗑 Futa historia</button>
+      <span class="token-pct" id="tokenPct">✓ Sawa</span>
+    </div>
+    <div class="quick-wrap">
+      <div class="qpill" onclick="quickSend('Habari za Tanzania leo')">🇹🇿 Habari za TZ</div>
+      <div class="qpill" onclick="quickSend('Niambie kitu cha kuvutia')">💡 Ukweli wa kuvutia</div>
+      <div class="qpill" onclick="quickSend('Nisaidie kuandika ujumbe wa biashara')">📝 Biashara</div>
+      <div class="qpill" onclick="quickSend('Tafsiri kwa Kiingereza: ')">🌍 Tafsiri</div>
+      <div class="qpill" onclick="quickSend('Nipe ushairi mfupi wa Tanzania')">🎵 Ushairi</div>
+    </div>
+    <div class="input-bar">
+      <textarea class="chat-inp" id="chatInp" placeholder="Uliza LazAI chochote..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"
+        oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- SEARCH PANEL -->
+  <div class="panel" id="panelSearch">
+    <div class="search-body">
+      <div class="search-inp-wrap">
+        <input class="search-inp" id="searchInp" placeholder="Tafuta chochote mtandaoni..." 
+          onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="search-btn" onclick="doSearch()">🔍</button>
+      </div>
+      <div id="searchResults">
+        <div class="no-result">
+          <div style="font-size:40px;margin-bottom:8px">🔍</div>
+          <div style="font-size:13px">Andika swali na bonyeza tafuta</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE PANEL -->
+  <div class="panel" id="panelImage">
+    <div class="img-body">
+      <div class="img-inp-wrap">
+        <div class="img-style-row" id="styleRow">
+          <div class="style-pill sel" onclick="selStyle(this,'')">✨ Kawaida</div>
+          <div class="style-pill" onclick="selStyle(this,'realistic photo, ')">📷 Picha halisi</div>
+          <div class="style-pill" onclick="selStyle(this,'digital art, ')">🎨 Sanaa ya dijitali</div>
+          <div class="style-pill" onclick="selStyle(this,'anime style, ')">🗾 Anime</div>
+          <div class="style-pill" onclick="selStyle(this,'oil painting, ')">🖼️ Rangi za mafuta</div>
+          <div class="style-pill" onclick="selStyle(this,'Tanzania African art, ')">🇹🇿 Sanaa ya Afrika</div>
+        </div>
+        <textarea class="img-inp" id="imgInp" placeholder="Elezea picha unayotaka... Mfano: Kilimanjaro usiku na nyota"></textarea>
+        <button class="img-gen-btn" onclick="genImage()">🎨 TENGENEZA PICHA</button>
+      </div>
+      <div id="imgResult">
+        <div class="img-placeholder"><span class="big">🎨</span><span style="font-size:13px;color:var(--muted)">Picha yako itaonekana hapa</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// CONFIG — BADILISHA HAPA TU
+// ═══════════════════════════════════════════
+const CONFIG = {
+  password: 'lazai2024',          // Nenosiri lako
+  groqKey: 'YOUR_GROQ_API_KEY',   // ← Weka API key yako hapa
+  model: 'llama-3.3-70b-versatile',
+  // 🔑 SULUHISHO KUU: Hifadhi tu ujumbe 6 wa mwisho (si mzima)
+  maxHistory: 6,                  // ← Hii inasuluhisha tatizo!
+  maxTokensPerMsg: 800,
+  systemPrompt: `Wewe ni LazAI PRO — msaidizi wa AI wa Kiswahili, ulioundwa na Lazaro John Mkalagale wa Tanzania 🇹🇿. 
+Jibu KILA WAKATI kwa Kiswahili fasaha. Jibu kwa ufupi na wazi. Usitumie maneno mengi yasiyohitajika.
+Ukisaidiwa na swali la Tanzania, jibu kwa uzalendo na upendo wa nchi yako.`
+};
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let chatHistory = [];  // Hii ndio inayohifadhiwa — IMEPUNGUZWA
+let imgStyle = '';
+let isTyping = false;
+
+// ═══════════════════════════════════════════
+// LOCK
+// ═══════════════════════════════════════════
+function checkPwd(){
+  const v = document.getElementById('pwdInp').value;
+  if(v === CONFIG.password){
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('initTime').textContent = now();
+  } else {
+    document.getElementById('lockErr').textContent = '❌ Nenosiri si sahihi!';
+    document.getElementById('pwdInp').value = '';
+    setTimeout(()=>document.getElementById('lockErr').textContent='', 2500);
+  }
+}
+document.getElementById('pwdInp').addEventListener('keydown', e => {
+  if(e.key === 'Enter') checkPwd();
+});
+
+// ═══════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const ids=['chat','search','image'];
+    t.classList.toggle('active', ids[i]===tab);
+  });
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// CHAT — SULUHISHO KUU
+// ═══════════════════════════════════════════
+async function sendMsg(){
+  const inp = document.getElementById('chatInp');
+  const txt = inp.value.trim();
+  if(!txt || isTyping) return;
+  inp.value = ''; inp.style.height = 'auto';
+  addMsg('user', txt);
+
+  // Ongeza kwenye history — TRIMMED
+  chatHistory.push({role:'user', content: txt});
+  
+  // 🔑 HIFADHI TU UJUMBE WA MWISHO maxHistory — SULUHISHO!
+  if(chatHistory.length > CONFIG.maxHistory){
+    chatHistory = chatHistory.slice(-CONFIG.maxHistory);
+  }
+
+  updateTokenBar();
+  await callGroq();
+}
+
+function quickSend(txt){
+  document.getElementById('chatInp').value = txt;
+  document.getElementById('chatInp').focus();
+}
+
+async function callGroq(){
+  if(!CONFIG.groqKey || CONFIG.groqKey === 'YOUR_GROQ_API_KEY'){
+    addMsg('bot','⚠️ API key haijawekwa! Fungua faili na ubadilishe YOUR_GROQ_API_KEY.');
+    return;
+  }
+
+  isTyping = true;
+  document.getElementById('sendBtn').disabled = true;
+  const typEl = showTyping();
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${CONFIG.groqKey}`
+      },
+      body: JSON.stringify({
+        model: CONFIG.model,
+        max_tokens: CONFIG.maxTokensPerMsg,
+        temperature: 0.7,
+        messages: [
+          {role:'system', content: CONFIG.systemPrompt},
+          // Tuma tu history iliyopunguzwa — SULUHISHO KUU!
+          ...chatHistory
+        ]
+      })
+    });
+
+    typEl.remove();
+
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      const code = res.status;
+      let errMsg = '';
+      
+      if(code === 429){
+        errMsg = '⏳ Umefika kikomo cha maombi! Subiri dakika 1 kisha jaribu tena.';
+      } else if(code === 401){
+        errMsg = '🔑 API key si sahihi! Angalia tena.';
+      } else if(code === 413 || (err.error?.message||'').includes('token')){
+        // Katika hali hii, futa history na jaribu tena
+        chatHistory = chatHistory.slice(-2);
+        errMsg = '📦 Ujumbe mrefu sana! Historia imefutwa. Jaribu tena.';
+      } else {
+        errMsg = `❌ Hitilafu ya seva (${code}). Jaribu tena!`;
+      }
+      
+      addMsg('bot', errMsg);
+      showToast(errMsg);
+    } else {
+      const data = await res.json();
+      const reply = data.choices?.[0]?.message?.content || 'Samahani, jibu halikupatikana.';
+      addMsg('bot', reply);
+      // Hifadhi jibu kwenye history
+      chatHistory.push({role:'assistant', content: reply});
+      if(chatHistory.length > CONFIG.maxHistory){
+        chatHistory = chatHistory.slice(-CONFIG.maxHistory);
+      }
+    }
+  } catch(e) {
+    typEl.remove();
+    const errMsg = '🌐 Hakuna mtandao au tatizo la seva. Angalia internet yako!';
+    addMsg('bot', errMsg);
+    showToast(errMsg);
+  }
+
+  isTyping = false;
+  document.getElementById('sendBtn').disabled = false;
+  updateTokenBar();
+}
+
+function addMsg(role, txt){
+  const msgs = document.getElementById('msgs');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const label = role === 'bot'
+    ? `<div class="msg-label"><span class="bot-av">L</span> LAZAI PRO</div>`
+    : `<div class="msg-label">WEWE</div>`;
+  div.innerHTML = `${label}
+    <div class="msg-bubble">${txt.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+    <div class="msg-time">${now()}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping(){
+  const msgs = document.getElementById('msgs');
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  d.innerHTML = `<div class="msg-label"><span class="bot-av">L</span> LAZAI PRO</div>
+    <div class="typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+  return d;
+}
+
+function clearHistory(){
+  chatHistory = [];
+  updateTokenBar();
+  showToast('✅ Historia imefutwa — sasa inafanya kazi vizuri!');
+}
+
+function updateTokenBar(){
+  const n = chatHistory.length;
+  const pct = Math.min(100, Math.round(n / CONFIG.maxHistory * 100));
+  document.getElementById('tokenTxt').textContent = `Historia: ${Math.floor(n/2)} mazungumzo`;
+  const pctEl = document.getElementById('tokenPct');
+  if(pct >= 90){ pctEl.textContent = '⚠️ Karibu kikomo'; pctEl.style.color='var(--red)'; }
+  else if(pct >= 60){ pctEl.textContent = '⚡ Wastani'; pctEl.style.color='var(--gold)'; }
+  else { pctEl.textContent = '✓ Sawa'; pctEl.style.color='var(--green)'; }
+}
+
+// ═══════════════════════════════════════════
+// SEARCH (DuckDuckGo)
+// ═══════════════════════════════════════════
+async function doSearch(){
+  const q = document.getElementById('searchInp').value.trim();
+  if(!q) return;
+  const el = document.getElementById('searchResults');
+  el.innerHTML = '<div class="no-result"><div style="font-size:32px">⏳</div><div>Inatafuta...</div></div>';
+  try {
+    const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1&skip_disambig=1`);
+    const data = await res.json();
+    let html = '';
+    if(data.AbstractText){
+      html += `<div class="result-card">
+        <div class="result-title">📌 ${data.Heading||q}</div>
+        <div class="result-url">${data.AbstractSource}</div>
+        <div class="result-desc">${data.AbstractText}</div>
+        ${data.AbstractURL?`<a class="result-link" href="${data.AbstractURL}" target="_blank">Soma zaidi ›</a>`:''}
+      </div>`;
+    }
+    if(data.RelatedTopics?.length){
+      data.RelatedTopics.slice(0,5).forEach(t=>{
+        if(t.Text) html += `<div class="result-card">
+          <div class="result-desc">${t.Text}</div>
+          ${t.FirstURL?`<a class="result-link" href="${t.FirstURL}" target="_blank">Fungua ›</a>`:''}
+        </div>`;
+      });
+    }
+    if(!html) html = `<div class="no-result"><div style="font-size:32px">😕</div><div>Hakuna matokeo. Jaribu maneno mengine.</div></div>`;
+    el.innerHTML = html;
+  } catch(e){
+    el.innerHTML = `<div class="no-result">🌐 Tatizo la mtandao. Angalia internet yako.</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════
+// IMAGE (Pollinations)
+// ═══════════════════════════════════════════
+function selStyle(el, style){
+  document.querySelectorAll('.style-pill').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+  imgStyle = style;
+}
+
+function genImage(){
+  const prompt = document.getElementById('imgInp').value.trim();
+  if(!prompt){ showToast('⚠️ Andika maelezo ya picha kwanza!'); return; }
+  const fullPrompt = imgStyle + prompt + ', high quality, detailed';
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=512&height=512&nologo=true&seed=${Date.now()}`;
+  const el = document.getElementById('imgResult');
+  el.innerHTML = `<div class="img-placeholder"><span class="big">⏳</span><span style="font-size:13px;color:var(--muted)">Inatengeneza picha... subiri sekunde 15-30</span></div>`;
+  const img = new Image();
+  img.onload = ()=>{ el.innerHTML = `<div class="img-result"><img src="${url}" alt="picha"><div style="font-size:10px;color:var(--muted);text-align:center;margin-top:6px;font-family:'Share Tech Mono',monospace">Bonyeza picha kuitunza</div></div>`; };
+  img.onerror = ()=>{ el.innerHTML = `<div class="img-placeholder"><span class="big">❌</span><span style="font-size:12px;color:var(--red)">Imeshindwa. Jaribu tena!</span></div>`; };
+  img.src = url;
+  // Fallback kwa img tag moja kwa moja
+  setTimeout(()=>{
+    if(el.querySelector('.img-placeholder span.big')?.textContent==='⏳'){
+      el.innerHTML = `<div class="img-result"><img src="${url}" alt="picha" onerror="this.parentElement.innerHTML='<p style=color:red>Imeshindwa kutengeneza picha</p>'"><div style="font-size:10px;color:var(--muted);text-align:center;margin-top:6px;font-family:Share Tech Mono,monospace">Bonyeza picha kuitunza</div></div>`;
+    }
+  }, 3000);
+}
+
+// ═══════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════
+function now(){ return new Date().toLocaleTimeString('sw-TZ',{hour:'2-digit',minute:'2-digit'}); }
+function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; }
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
