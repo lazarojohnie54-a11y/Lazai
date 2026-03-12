@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>LazAI PRO 🇹🇿</title>
+<meta name="application-name" content="LazAI PRO">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LazAI PRO">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#00F5CC">
+<meta name="description" content="AI ya Kiswahili na Tanzania - by Lazaro John Mkalagale">
+<link rel="manifest" href="manifest.json">
+<!-- Apple Touch Icons -->
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+body.theme-blue{--bg:#030810;--s1:#060F1C;--s2:#091525;--card:#0B1A2E;--border:#0E2540;--border2:#163550;--p:#00F5CC;--p2:#0099FF;--text:#8BBCD8;--text2:#C5DFF0;--muted:#1C3D5A;}
+body.theme-black{--bg:#0A0A0A;--s1:#111;--s2:#181818;--card:#141414;--border:#252525;--border2:#333;--p:#FFF;--p2:#AAA;--text:#888;--text2:#CCC;--muted:#333;}
+body.theme-yellow{--bg:#0F0D00;--s1:#1A1700;--s2:#222000;--card:#1C1A00;--border:#3A3600;--border2:#4A4400;--p:#FFD700;--p2:#FFA500;--text:#C8B860;--text2:#EED970;--muted:#3A3200;}
+body.theme-red{--bg:#0F0005;--s1:#1A000A;--s2:#220010;--card:#1C0008;--border:#3A0015;--border2:#4A0020;--p:#FF3355;--p2:#FF6600;--text:#C86070;--text2:#EE8090;--muted:#3A0015;}
+body.theme-white{--bg:#F0F4F8;--s1:#E4EAF0;--s2:#D8E0EA;--card:#FFF;--border:#C8D4E0;--border2:#B0C0D0;--p:#0066CC;--p2:#0099FF;--text:#4A6080;--text2:#1A3050;--muted:#A0B8CC;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text2);overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,245,204,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,204,.02) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+#lock{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+.lk-glow{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:16px;box-shadow:0 0 60px rgba(0,245,204,.25);animation:lp 3s ease-in-out infinite;}
+@keyframes lp{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.lk-title{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;letter-spacing:4px;color:var(--text2);margin-bottom:2px;}
+.lk-title span{color:var(--p);}
+.lk-ver{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--muted);margin-bottom:5px;}
+.lk-by{font-size:11px;color:var(--muted);margin-bottom:24px;font-family:'Share Tech Mono',monospace;}
+.lk-by b{color:var(--p);}
+.lk-inp{width:100%;max-width:290px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px 20px;color:var(--text2);font-size:18px;font-family:'Share Tech Mono',monospace;text-align:center;letter-spacing:6px;outline:none;margin-bottom:10px;}
+.lk-inp:focus{border-color:var(--p);}
+.lk-inp::placeholder{letter-spacing:2px;font-size:12px;color:var(--muted);}
+.lk-btn{width:100%;max-width:290px;padding:14px;background:linear-gradient(135deg,var(--p),var(--p2));border:none;border-radius:13px;color:var(--bg);font-family:'Syne',sans-serif;font-size:14px;font-weight:800;letter-spacing:3px;cursor:pointer;}
+.lk-btn:active{opacity:.85;}
+.lk-err{font-size:11px;color:#FF3355;text-align:center;margin-top:7px;font-family:'Share Tech Mono',monospace;height:15px;}
+#app{display:none;flex-direction:column;height:100%;position:relative;z-index:1;}
+.hdr{display:flex;align-items:center;gap:9px;padding:8px 12px 7px;background:rgba(6,15,28,.97);border-bottom:1px solid var(--border);flex-shrink:0;backdrop-filter:blur(12px);}
+.hdr-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;color:var(--bg);flex-shrink:0;}
+.hdr-name{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--text2);}
+.hdr-name span{color:var(--p);}
+.hdr-sub{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--muted);}
+.hdr-pts{font-family:'Share Tech Mono',monospace;font-size:10px;color:#FFD700;margin-left:auto;cursor:pointer;}
+.pers-bar{display:flex;gap:4px;padding:5px 10px;background:var(--s1);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;}
+.pers-bar::-webkit-scrollbar{display:none;}
+.pb{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:3px 9px;font-size:9px;color:var(--text);cursor:pointer;white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:600;}
+.pb.on{background:rgba(0,245,204,.08);border-color:var(--p);color:var(--p);}
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:7px 10px 5px;text-align:center;cursor:pointer;font-size:7px;font-weight:700;color:var(--muted);letter-spacing:.5px;border-bottom:2px solid transparent;font-family:'Rajdhani',sans-serif;white-space:nowrap;}
+.tab.on{color:var(--p);border-bottom-color:var(--p);}
+.tab-ic{font-size:13px;display:block;margin-bottom:1px;}
+.pnl{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.pnl.on{display:flex;}
+.sc{overflow-y:auto;flex:1;padding:11px 12px;}
+.sc::-webkit-scrollbar{width:2px;}
+.sc::-webkit-scrollbar-thumb{background:var(--border);}
+.sec-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:800;color:var(--p);letter-spacing:2px;margin-bottom:8px;}
+.msgs{flex:1;overflow-y:auto;padding:11px 12px;display:flex;flex-direction:column;gap:9px;}
+.msgs::-webkit-scrollbar{width:2px;}
+.msg{max-width:85%;display:flex;flex-direction:column;gap:2px;}
+.msg.u{align-self:flex-end;align-items:flex-end;}
+.msg.b{align-self:flex-start;align-items:flex-start;}
+.msg-lbl{font-size:7px;font-family:'Share Tech Mono',monospace;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.bav{width:13px;height:13px;border-radius:3px;background:linear-gradient(135deg,var(--p),var(--p2));display:inline-flex;align-items:center;justify-content:center;font-size:6px;font-weight:800;color:var(--bg);font-family:'Syne',sans-serif;}
+.bubble{padding:8px 11px;border-radius:12px;font-size:13px;line-height:1.65;word-break:break-word;}
+.msg.u .bubble{background:linear-gradient(135deg,rgba(0,153,255,.18),rgba(0,245,204,.08));border:1px solid rgba(0,245,204,.14);border-bottom-right-radius:3px;color:var(--text2);}
+.msg.b .bubble{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:3px;}
+.msg-t{font-size:7px;color:var(--muted);font-family:'Share Tech Mono',monospace;}
+.typing-b{display:flex;gap:3px;align-items:center;padding:9px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;border-bottom-left-radius:3px;}
+.typing-b span{width:5px;height:5px;border-radius:50%;background:var(--p);animation:td 1.2s infinite;}
+.typing-b span:nth-child(2){animation-delay:.2s;}
+.typing-b span:nth-child(3){animation-delay:.4s;}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+.qk{padding:5px 9px;display:flex;gap:4px;overflow-x:auto;border-top:1px solid var(--border);flex-shrink:0;}
+.qk::-webkit-scrollbar{display:none;}
+.qp{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 9px;font-size:9px;color:var(--text);cursor:pointer;white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:600;}
+.qp:active{border-color:var(--p);color:var(--p);}
+.bot-bar{display:flex;flex-direction:column;background:var(--s1);border-top:1px solid var(--border);flex-shrink:0;padding:6px 9px;}
+.hist-row{display:flex;align-items:center;justify-content:space-between;padding:0 2px 4px;}
+.hist-txt{font-size:7px;color:var(--muted);font-family:'Share Tech Mono',monospace;}
+.hist-clr{font-size:7px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Share Tech Mono',monospace;}
+.hist-st{font-size:7px;font-family:'Share Tech Mono',monospace;}
+.inp-row{display:flex;gap:5px;align-items:flex-end;}
+.chat-ta{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 11px;color:var(--text2);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;resize:none;max-height:72px;}
+.chat-ta:focus{border-color:var(--p);}
+.chat-ta::placeholder{color:var(--muted);}
+.send-b,.voice-b{width:38px;height:38px;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.send-b{background:linear-gradient(135deg,var(--p),var(--p2));color:var(--bg);}
+.send-b:disabled{opacity:.3;}
+.voice-b{background:var(--card);border:1px solid var(--border);}
+.voice-b.on{background:rgba(255,51,85,.15);border-color:#FF3355;animation:vp 1s infinite;}
+@keyframes vp{0%,100%{box-shadow:0 0 0 0 rgba(255,51,85,.4)}50%{box-shadow:0 0 0 7px rgba(255,51,85,0)}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;}
+.card:active{transform:scale(.96);border-color:var(--p);}
+.card-ic{font-size:24px;display:block;margin-bottom:4px;}
+.card-n{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:2px;}
+.card-d{font-size:9px;color:var(--muted);line-height:1.4;}
+.tbox{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px;}
+.tbox-t{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--p);margin-bottom:9px;}
+.t-inp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 11px;color:var(--text2);font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;resize:none;min-height:64px;margin-bottom:8px;}
+.t-inp:focus{border-color:var(--p);}
+.t-inp::placeholder{color:var(--muted);}
+.t-run{width:100%;padding:10px;background:linear-gradient(135deg,var(--p),var(--p2));border:none;border-radius:9px;color:var(--bg);font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.t-res{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px;font-size:13px;line-height:1.7;margin-top:8px;display:none;white-space:pre-wrap;color:var(--text2);}
+.t-back{font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Share Tech Mono',monospace;margin-bottom:10px;}
+.ch-card{background:linear-gradient(135deg,rgba(0,245,204,.06),rgba(157,0,255,.04));border:1px solid var(--border2);border-radius:13px;padding:14px;margin-bottom:12px;}
+.ch-hdr{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.ch-badge{margin-left:auto;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.25);border-radius:7px;padding:3px 8px;font-size:9px;color:#FFD700;font-family:'Share Tech Mono',monospace;}
+.ch-q{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;font-weight:600;}
+.ch-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.ch-opt{background:var(--card);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:12px;color:var(--text);cursor:pointer;text-align:left;font-family:'Rajdhani',sans-serif;font-weight:600;}
+.ch-opt.correct{background:rgba(0,255,136,.1);border-color:#00FF88;color:#00FF88;}
+.ch-opt.wrong{background:rgba(255,51,85,.1);border-color:#FF3355;color:#FF3355;}
+.ch-opt.disabled{pointer-events:none;}
+.ch-res{border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.6;display:none;}
+.ch-res.ok{background:rgba(0,255,136,.07);border:1px solid rgba(0,255,136,.2);color:#00FF88;}
+.ch-res.fail{background:rgba(255,51,85,.07);border:1px solid rgba(255,51,85,.2);color:#FF7788;}
+.sdot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+.draft-wrap{display:flex;flex-direction:column;align-items:center;padding:10px;}
+.dhud{display:flex;gap:8px;width:100%;max-width:360px;margin-bottom:8px;}
+.dhb{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px;text-align:center;}
+.dhb.on{border-color:var(--p);}
+.dhb-v{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text2);font-weight:900;}
+.dhb-l{font-size:7px;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-top:1px;}
+.dstat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:7px 12px;margin-bottom:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--p);text-align:center;width:100%;max-width:360px;}
+.board{display:grid;grid-template-columns:repeat(8,1fr);gap:1px;background:var(--border);border:1.5px solid var(--border);border-radius:8px;overflow:hidden;width:100%;max-width:360px;aspect-ratio:1/1;}
+.sq{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.sq.dk{background:#1A2A3A;}.sq.lt{background:#2A3A4A;}
+body.theme-yellow .sq.dk{background:#2A2000;}body.theme-yellow .sq.lt{background:#3A3010;}
+body.theme-red .sq.dk{background:#2A0010;}body.theme-red .sq.lt{background:#1A0008;}
+body.theme-white .sq.dk{background:#8090A0;}body.theme-white .sq.lt{background:#B0C0D0;}
+body.theme-black .sq.dk{background:#1A1A1A;}body.theme-black .sq.lt{background:#2A2A2A;}
+.sq.sel{background:rgba(0,245,204,.2)!important;box-shadow:inset 0 0 0 2px var(--p);}
+.sq.hint{background:rgba(255,215,0,.18)!important;}
+.piece{width:76%;height:76%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;box-shadow:0 2px 5px rgba(0,0,0,.4);}
+.piece.p1{background:radial-gradient(circle at 35% 35%,#FF6688,#CC0033);}
+.piece.p2{background:radial-gradient(circle at 35% 35%,#AACCFF,#2244CC);}
+.piece.king::after{content:'♛';font-size:10px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,.9);}
+.dbtns{display:flex;gap:7px;margin-top:8px;width:100%;max-width:360px;}
+.dbtn{flex:1;padding:9px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;cursor:pointer;}
+.dbtn.pri{background:linear-gradient(135deg,var(--p),var(--p2));color:var(--bg);border:none;}
+.note-inp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text2);font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;resize:none;height:90px;margin-bottom:8px;}
+.note-inp:focus{border-color:var(--p);}
+.note-inp::placeholder{color:var(--muted);}
+.note-save{width:100%;padding:10px;background:linear-gradient(135deg,var(--p),var(--p2));border:none;border-radius:9px;color:var(--bg);font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:10px;}
+.note-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;position:relative;margin-bottom:6px;}
+.note-del{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);}
+.calc-disp{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;text-align:right;}
+.calc-expr{font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;min-height:16px;}
+.calc-val{font-size:28px;color:var(--text2);font-family:'Share Tech Mono',monospace;font-weight:900;word-break:break-all;}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.ck{padding:14px 6px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:15px;font-family:'Share Tech Mono',monospace;color:var(--text2);cursor:pointer;text-align:center;transition:all .1s;}
+.ck:active{transform:scale(.93);}
+.ck.op{color:var(--p);border-color:rgba(0,245,204,.2);}
+.ck.eq{background:linear-gradient(135deg,var(--p),var(--p2));color:var(--bg);border:none;}
+.ck.sp{grid-column:span 2;}
+.ck.clr{color:#FF3355;border-color:rgba(255,51,85,.2);}
+.curr-inp-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+.curr-inp{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text2);font-size:16px;font-family:'Share Tech Mono',monospace;outline:none;text-align:center;}
+.curr-inp:focus{border-color:var(--p);}
+.curr-sel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 8px;color:var(--text2);font-size:12px;font-family:'Rajdhani',sans-serif;outline:none;}
+.curr-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.curr-row:last-child{border-bottom:none;}
+.curr-val{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--p);font-weight:900;}
+.word-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.word-grid{display:flex;flex-direction:column;gap:4px;}
+.word-row{display:flex;gap:4px;}
+.wl{width:38px;height:38px;border-radius:6px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;font-family:'Share Tech Mono',monospace;color:var(--text2);background:var(--card);transition:all .3s;}
+.wl.correct{background:#006400;border-color:#00FF88;color:#fff;}
+.wl.present{background:#8B6914;border-color:#FFD700;color:#fff;}
+.wl.absent{background:#2A2A2A;border-color:#444;color:#777;}
+.wkb{display:flex;flex-direction:column;gap:4px;width:100%;}
+.wkb-row{display:flex;gap:3px;justify-content:center;}
+.wkey{min-width:26px;height:34px;border-radius:5px;background:var(--card);border:1px solid var(--border);font-size:10px;font-weight:700;font-family:'Share Tech Mono',monospace;color:var(--text2);cursor:pointer;padding:0 5px;}
+.wkey:active{transform:scale(.9);}
+.wkey.correct{background:#006400;border-color:#00FF88;color:#fff;}
+.wkey.present{background:#8B6914;border-color:#FFD700;color:#fff;}
+.wkey.absent{background:#2A2A2A;border-color:#444;color:#666;}
+.wkey.wide{min-width:40px;font-size:8px;}
+.wword-msg{font-size:12px;color:var(--p);font-family:'Share Tech Mono',monospace;text-align:center;min-height:18px;}
+.prov-card{background:linear-gradient(135deg,rgba(0,245,204,.06),rgba(0,153,255,.04));border:1px solid var(--border2);border-radius:13px;padding:16px;margin-bottom:10px;text-align:center;}
+.prov-txt{font-size:15px;color:var(--text2);font-weight:700;line-height:1.7;margin-bottom:8px;font-style:italic;}
+.prov-mean{font-size:12px;color:var(--text);line-height:1.6;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px 10px;text-align:center;}
+.stat-v{font-family:'Share Tech Mono',monospace;font-size:22px;color:var(--p);font-weight:900;display:block;}
+.stat-l{font-size:9px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace;}
+.share-wa{width:100%;padding:13px;background:#25D366;border:none;border-radius:11px;color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;}
+.thb{border-radius:9px;height:44px;border:2px solid transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:7px;font-family:'Share Tech Mono',monospace;transition:all .2s;}
+.thb.on{border-color:var(--p);transform:scale(1.06);}
+.thb span{font-size:14px;}
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px 12px;margin-bottom:6px;}
+.danger-btn{width:100%;padding:11px;background:rgba(255,51,85,.08);border:1px solid rgba(255,51,85,.25);border-radius:9px;color:#FF3355;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;}
+#voOvl{position:fixed;inset:0;z-index:500;background:rgba(3,8,16,.96);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+#voOvl.show{display:flex;}
+.vo-ring{width:100px;height:100px;border-radius:50%;border:3px solid #FF3355;display:flex;align-items:center;justify-content:center;position:relative;animation:vr 1.5s ease-in-out infinite;}
+.vo-ring::before{content:'';position:absolute;inset:-11px;border-radius:50%;border:1px solid rgba(255,51,85,.25);animation:vr 1.5s ease-in-out infinite reverse;}
+@keyframes vr{0%,100%{box-shadow:0 0 0 0 rgba(255,51,85,.3)}50%{box-shadow:0 0 0 13px rgba(255,51,85,0)}}
+.vo-stop{padding:10px 26px;background:#FF3355;border:none;border-radius:10px;color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.toast{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:7px 14px;font-size:10px;color:var(--text2);font-family:'Share Tech Mono',monospace;z-index:600;opacity:0;transition:opacity .3s;pointer-events:none;max-width:86%;text-align:center;}
+.toast.show{opacity:1;}
+.img-ta{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text2);font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;resize:none;height:66px;margin-bottom:8px;}
+.img-ta:focus{border-color:var(--p);}
+.img-ta::placeholder{color:var(--muted);}
+.img-go{width:100%;padding:11px;background:linear-gradient(135deg,#9D00FF,#FF3355);border:none;border-radius:10px;color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+#imgOut img{width:100%;border-radius:12px;border:1px solid var(--border);margin-top:9px;}
+.img-ph{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px 16px;text-align:center;color:var(--muted);}
+.srow{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px;margin-bottom:8px;}
+.srow::-webkit-scrollbar{display:none;}
+.sp{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 9px;font-size:9px;cursor:pointer;white-space:nowrap;color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:600;}
+.sp.on{border-color:var(--p);color:var(--p);}
+</style>
+</head>
+<body class="theme-blue">
+
+<!-- LOCK SCREEN -->
+<div id="lock">
+  <div class="lk-glow">🤖</div>
+  <div class="lk-title">LazAI <span>PRO</span></div>
+  <div class="lk-ver">VERSION 4.0</div>
+  <div class="lk-by">by <b>Lazaro John Mkalagale</b> 🇹🇿</div>
+  <input class="lk-inp" id="pwdInp" type="password" placeholder="Weka nenosiri" maxlength="30">
+  <button class="lk-btn" onclick="unlock()">🔓 INGIA</button>
+  <div class="lk-err" id="lkErr"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-av">LAZ</div>
+    <div style="flex:1">
+      <div class="hdr-name">LazAI <span>PRO</span> <span style="font-size:8px;color:var(--muted)">v4</span></div>
+      <div class="hdr-sub">by Lazaro John Mkalagale 🇹🇿</div>
+    </div>
+    <div class="hdr-pts" id="hdrPts">0 pts 🏆</div>
+  </div>
+
+  <div class="pers-bar">
+    <div class="pb on" onclick="setPers(this,'msaidizi')">🤝 Msaidizi</div>
+    <div class="pb" onclick="setPers(this,'mwalimu')">👨‍🏫 Mwalimu</div>
+    <div class="pb" onclick="setPers(this,'biashara')">💼 Biashara</div>
+    <div class="pb" onclick="setPers(this,'mcheshi')">😂 Mcheshi</div>
+    <div class="pb" onclick="setPers(this,'kocha')">🏋️ Kocha</div>
+    <div class="pb" onclick="setPers(this,'africa')">🌍 Afrika</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="gT('chat',this)"><span class="tab-ic">💬</span>CHAT</div>
+    <div class="tab" onclick="gT('tools',this)"><span class="tab-ic">🛠️</span>TOOLS</div>
+    <div class="tab" onclick="gT('challenge',this)"><span class="tab-ic">🎯</span>CHANGAMOTO</div>
+    <div class="tab" onclick="gT('draft',this)"><span class="tab-ic">♟️</span>DRAFT</div>
+    <div class="tab" onclick="gT('wordle',this)"><span class="tab-ic">🔤</span>NENO</div>
+    <div class="tab" onclick="gT('calc',this)"><span class="tab-ic">🧮</span>HESABU</div>
+    <div class="tab" onclick="gT('currency',this)"><span class="tab-ic">💱</span>FEDHA</div>
+    <div class="tab" onclick="gT('notes',this)"><span class="tab-ic">📝</span>DAFTARI</div>
+    <div class="tab" onclick="gT('proverbs',this)"><span class="tab-ic">📖</span>METHALI</div>
+    <div class="tab" onclick="gT('stats',this)"><span class="tab-ic">📊</span>TAKWIMU</div>
+    <div class="tab" onclick="gT('image',this)"><span class="tab-ic">🎨</span>PICHA</div>
+    <div class="tab" onclick="gT('settings',this)"><span class="tab-ic">⚙️</span>MIPANGO</div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="pnl on" id="pnlChat">
+    <div class="msgs" id="msgs"></div>
+    <div class="qk" id="qkRow"></div>
+    <div class="bot-bar">
+      <div class="hist-row">
+        <span class="hist-txt" id="histTxt">Historia: 0</span>
+        <button class="hist-clr" onclick="clearHist()">🗑 Futa</button>
+        <span class="hist-st" id="histSt" style="color:#00FF88">✓ Sawa</span>
+      </div>
+      <div class="inp-row">
+        <button class="voice-b" id="voiceBtn" onclick="toggleVoice()">🎤</button>
+        <textarea class="chat-ta" id="chatTa" placeholder="Uliza LazAI chochote..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"
+          oninput="autoH(this)"></textarea>
+        <button class="send-b" id="sendBtn" onclick="sendChat()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div class="pnl" id="pnlTools">
+    <div class="sc" id="toolsBody">
+      <div class="sec-lbl">⚡ AI TOOLS — BURE KABISA</div>
+      <div class="grid2">
+        <div class="card" onclick="openTool('homework')"><span class="card-ic">📚</span><div class="card-n">Masomo</div><div class="card-d">Kazi za nyumbani</div></div>
+        <div class="card" onclick="openTool('business')"><span class="card-ic">💡</span><div class="card-n">Biashara</div><div class="card-d">Ideas Tanzania</div></div>
+        <div class="card" onclick="openTool('motivation')"><span class="card-ic">🔥</span><div class="card-n">Motisha</div><div class="card-d">Maneno ya nguvu</div></div>
+        <div class="card" onclick="openTool('lyrics')"><span class="card-ic">🎵</span><div class="card-n">Bongo Lyrics</div><div class="card-d">Tengeneza wimbo</div></div>
+        <div class="card" onclick="openTool('translate')"><span class="card-ic">🌍</span><div class="card-n">Tafsiri</div><div class="card-d">SW ↔ EN na zaidi</div></div>
+        <div class="card" onclick="openTool('cv')"><span class="card-ic">📄</span><div class="card-n">Barua/CV</div><div class="card-d">Barua za kazi</div></div>
+        <div class="card" onclick="openTool('poem')"><span class="card-ic">✍️</span><div class="card-n">Shairi</div><div class="card-d">Tengeneza shairi</div></div>
+        <div class="card" onclick="openTool('story')"><span class="card-ic">📖</span><div class="card-n">Hadithi</div><div class="card-d">Hadithi za Tanzania</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="pnl" id="pnlChallenge">
+    <div class="sc"><div id="challengeBody"></div></div>
+  </div>
+
+  <!-- DRAFT -->
+  <div class="pnl" id="pnlDraft">
+    <div class="sc" style="padding:0">
+      <div class="draft-wrap">
+        <div class="dhud">
+          <div class="dhb" id="dhP1"><div class="dhb-v" id="p1c">12</div><div class="dhb-l">🔴 WEWE</div></div>
+          <div class="dhb" id="dhTurn"><div class="dhb-v">🔴</div><div class="dhb-l">ZAMU</div></div>
+          <div class="dhb" id="dhP2"><div class="dhb-v" id="p2c">12</div><div class="dhb-l">🔵 AI</div></div>
+        </div>
+        <div class="dstat" id="dStat">Bonyeza kipande chako chekundu kuanza!</div>
+        <div class="board" id="board"></div>
+        <div class="dbtns">
+          <div class="dbtn" onclick="dHint()">💡 Hint</div>
+          <div class="dbtn pri" onclick="initDraft()">🔄 Mpya</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORDLE -->
+  <div class="pnl" id="pnlWordle">
+    <div class="sc"><div id="wordleBody"></div></div>
+  </div>
+
+  <!-- CALC -->
+  <div class="pnl" id="pnlCalc">
+    <div class="sc">
+      <div class="sec-lbl">🧮 KIKOKOTOO — BURE & OFFLINE</div>
+      <div style="max-width:320px;margin:0 auto">
+        <div class="calc-disp">
+          <div class="calc-expr" id="calcExpr"></div>
+          <div class="calc-val" id="calcVal">0</div>
+        </div>
+        <div class="calc-grid">
+          <button class="ck clr" onclick="cClear()">AC</button>
+          <button class="ck clr" onclick="cDel()">⌫</button>
+          <button class="ck op" onclick="cInp('%')">%</button>
+          <button class="ck op" onclick="cInp('/')">÷</button>
+          <button class="ck" onclick="cInp('7')">7</button>
+          <button class="ck" onclick="cInp('8')">8</button>
+          <button class="ck" onclick="cInp('9')">9</button>
+          <button class="ck op" onclick="cInp('*')">×</button>
+          <button class="ck" onclick="cInp('4')">4</button>
+          <button class="ck" onclick="cInp('5')">5</button>
+          <button class="ck" onclick="cInp('6')">6</button>
+          <button class="ck op" onclick="cInp('-')">−</button>
+          <button class="ck" onclick="cInp('1')">1</button>
+          <button class="ck" onclick="cInp('2')">2</button>
+          <button class="ck" onclick="cInp('3')">3</button>
+          <button class="ck op" onclick="cInp('+')">+</button>
+          <button class="ck" onclick="cInp('0')">0</button>
+          <button class="ck" onclick="cInp('.')">.</button>
+          <button class="ck eq sp" onclick="cEquals()">=</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CURRENCY -->
+  <div class="pnl" id="pnlCurrency">
+    <div class="sc">
+      <div class="sec-lbl">💱 UBADILISHAJI WA FEDHA — BURE</div>
+      <div class="curr-inp-row">
+        <input class="curr-inp" id="currAmt" type="number" value="10000" oninput="calcCurr()">
+        <select class="curr-sel" id="currFrom" onchange="calcCurr()">
+          <option value="TZS">🇹🇿 TZS</option>
+          <option value="USD">🇺🇸 USD</option>
+          <option value="KES">🇰🇪 KES</option>
+          <option value="EUR">🇪🇺 EUR</option>
+          <option value="GBP">🇬🇧 GBP</option>
+        </select>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px" id="currRes"></div>
+      <div style="font-size:9px;color:var(--muted);text-align:center;font-family:Share Tech Mono,monospace;margin-top:6px">Viwango vya takriban • Angalia benki kwa usahihi</div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="pnl" id="pnlNotes">
+    <div class="sc">
+      <div class="sec-lbl">📝 DAFTARI LANGU — OFFLINE</div>
+      <textarea class="note-inp" id="noteInp" placeholder="Andika maelezo, orodha, au kitu chochote... Inahifadhiwa kwenye simu yako!"></textarea>
+      <button class="note-save" onclick="saveNote()">💾 HIFADHI</button>
+      <div id="notesList"></div>
+    </div>
+  </div>
+
+  <!-- PROVERBS -->
+  <div class="pnl" id="pnlProverbs">
+    <div class="sc"><div id="provBody"></div></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="pnl" id="pnlStats">
+    <div class="sc"><div id="statsBody"></div></div>
+  </div>
+
+  <!-- IMAGE -->
+  <div class="pnl" id="pnlImage">
+    <div class="sc">
+      <div class="sec-lbl">🎨 TENGENEZA PICHA KWA AI</div>
+      <div class="srow">
+        <div class="sp on" onclick="selSt(this,'')">✨ Kawaida</div>
+        <div class="sp" onclick="selSt(this,'realistic photo, ')">📷 Halisi</div>
+        <div class="sp" onclick="selSt(this,'digital art, vibrant, ')">🎨 Sanaa</div>
+        <div class="sp" onclick="selSt(this,'anime style, ')">🗾 Anime</div>
+        <div class="sp" onclick="selSt(this,'African traditional art, Tanzania, ')">🌍 Afrika</div>
+        <div class="sp" onclick="selSt(this,'futuristic neon, ')">🌆 Future</div>
+      </div>
+      <textarea class="img-ta" id="imgTa" placeholder="Mfano: Kilimanjaro usiku na nyota nyingi"></textarea>
+      <button class="img-go" onclick="genImg()">🎨 TENGENEZA PICHA</button>
+      <div id="imgOut"><div class="img-ph"><span style="font-size:36px;display:block;margin-bottom:5px">🎨</span><span style="font-size:12px">Picha yako itaonekana hapa</span></div></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="pnl" id="pnlSettings">
+    <div class="sc">
+      <div class="sec-lbl">🎨 CHAGUA RANGI YA APP</div>
+      <div class="theme-grid">
+        <button class="thb on" id="tb-blue" onclick="setTheme('blue',this)" style="background:#030810;color:#00F5CC"><span>🌊</span>BULUU</button>
+        <button class="thb" id="tb-black" onclick="setTheme('black',this)" style="background:#0A0A0A;color:#fff"><span>⚫</span>NYEUSI</button>
+        <button class="thb" id="tb-yellow" onclick="setTheme('yellow',this)" style="background:#1A1700;color:#FFD700"><span>🌟</span>NJANO</button>
+        <button class="thb" id="tb-red" onclick="setTheme('red',this)" style="background:#1A000A;color:#FF3355"><span>🔴</span>NYEKUNDU</button>
+        <button class="thb" id="tb-white" onclick="setTheme('white',this)" style="background:#F0F4F8;color:#0066CC"><span>⬜</span>NYEUPE</button>
+      </div>
+      <div class="sec-lbl">🧠 KUMBUKUMBU YANGU</div>
+      <div id="memFields"></div>
+      <div class="sec-lbl" style="margin-top:12px">🏆 POINTI ZANGU</div>
+      <div class="set-row">
+        <div><div style="font-size:13px;color:var(--text2);font-weight:600">Jumla ya Pointi</div><div style="font-size:9px;color:var(--muted)">Zilizokusanywa kwa matumizi</div></div>
+        <span id="setPoints" style="font-family:Share Tech Mono,monospace;font-size:18px;color:#FFD700;font-weight:900">0</span>
+      </div>
+      <button class="danger-btn" onclick="clearAll()">🗑 Futa Data Yote</button>
+      <div style="text-align:center;font-family:Share Tech Mono,monospace;font-size:8px;color:var(--muted);margin-top:14px">LazAI PRO v4 🇹🇿<br>Imetengenezwa na Lazaro John Mkalagale</div>
+    </div>
+  </div>
+</div>
+
+<!-- VOICE OVERLAY -->
+<div id="voOvl">
+  <div class="vo-ring"><span style="font-size:40px">🎤</span></div>
+  <div style="font-family:Share Tech Mono,monospace;font-size:10px;color:#FF3355;letter-spacing:3px">INASIKILIZA...</div>
+  <div id="voTxt" style="font-size:13px;color:var(--text2);text-align:center;max-width:260px;line-height:1.6;min-height:38px">Sema swali lako kwa Kiswahili...</div>
+  <button class="vo-stop" onclick="stopVoice()">■ SIMAMA</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ SIRI ILIYOFICHWA ══
+const _A=atob('Z3NrX2hSaXZXNkl4QzM0MVBtTFJGQTVuV0dkeWIzRllWemxCVnhrNmg5NHNZYUwyM1Q1bEhWeUQ=');
+const PWDS=['lazai2024']; // Ongeza passwords zaidi hapa kwa wanunuzi
+
+// ══ STATE ══
+let hist=[],busy=false,imgSt='',pers='msaidizi';
+let rec=null,voiceOn=false,pts=0,mem={},cVal='0';
+
+// ══ MEM ══
+function loadMem(){
+  try{mem=JSON.parse(localStorage.getItem('lz4')||'{}');}catch(e){mem={};}
+  if(!mem.cc) mem.cc=0;
+  if(!mem.logs) mem.logs=[];
+  if(!mem.pts) mem.pts=0;
+  if(!mem.cd) mem.cd={};
+  if(!mem.cs) mem.cs=0;
+  if(!mem.notes) mem.notes=[];
+  if(!mem.st) mem.st={ch:0,tl:0,im:0,gm:0,cl:0};
+  pts=mem.pts||0;
+}
+function saveMem(){try{localStorage.setItem('lz4',JSON.stringify(mem));}catch(e){}}
+function addPts(n,r=''){
+  pts+=n;mem.pts=pts;saveMem();
+  document.getElementById('hdrPts').textContent=pts+' pts 🏆';
+  document.getElementById('setPoints').textContent=pts;
+  if(r) showToast('+'+n+' pointi! '+r);
+}
+
+// ══ LOCK ══
+function unlock(){
+  const v=document.getElementById('pwdInp').value.trim();
+  if(PWDS.includes(v)){
+    loadMem();
+    document.getElementById('lock').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('hdrPts').textContent=pts+' pts 🏆';
+    document.getElementById('setPoints').textContent=pts;
+    applyTheme(localStorage.getItem('lz_th')||'blue');
+    initChat();initDraft();renderChallenge();renderProv();renderNotes();calcCurr();renderMem();
+  } else {
+    document.getElementById('lkErr').textContent='❌ Nenosiri si sahihi!';
+    document.getElementById('pwdInp').value='';
+    setTimeout(()=>document.getElementById('lkErr').textContent='',2500);
+  }
+}
+document.getElementById('pwdInp').onkeydown=e=>{if(e.key==='Enter')unlock();};
+
+// ══ TABS ══
+function gT(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('pnl'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('on');
+  if(id==='wordle') initWordle();
+  if(id==='stats') renderStats();
+  if(id==='settings') renderMem();
+  if(id==='currency') calcCurr();
+}
+
+// ══ THEME ══
+function setTheme(n,el){applyTheme(n);localStorage.setItem('lz_th',n);showToast('🎨 '+el.textContent.trim());}
+function applyTheme(n){
+  document.body.className='theme-'+n;
+  document.querySelectorAll('.thb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tb-'+n)?.classList.add('on');
+}
+
+// ══ PERSONALITY ══
+const PS={
+  msaidizi:'Wewe ni LazAI PRO — msaidizi wa AI wa Kiswahili, ulioundwa na Lazaro John Mkalagale 🇹🇿. Jibu kwa Kiswahili fasaha na ufupi.',
+  mwalimu:'Wewe ni Mwalimu LazAI wa Tanzania. Eleza mambo kwa uvumilivu na mifano wazi. Jibu kwa Kiswahili.',
+  biashara:'Wewe ni mshauri wa biashara Tanzania. Toa ushauri wa vitendo wa ujasiriamali. Jibu kwa Kiswahili.',
+  mcheshi:'Wewe ni LazAI ya kuchekesha — jokes za Kibongo, uwe mzaha sana. Jibu kwa Kiswahili na furaha.',
+  kocha:'Wewe ni Kocha mkali. Sukuma mtumiaji kufanikisha malengo yake. Jibu kwa nguvu kwa Kiswahili.',
+  africa:'Wewe ni mtaalamu wa Afrika — biashara, kilimo, teknolojia Tanzania. Jibu kwa Kiswahili.',
+};
+const QP={
+  msaidizi:['🇹🇿 Habari za TZ','💡 Ukweli wa kuvutia','📝 Andika ujumbe','🤔 Nipe ushauri'],
+  mwalimu:['📐 Fundisha hesabu','🔬 Eleza sayansi','📖 Maswali ya mtihani','✍️ Sahihisha insha'],
+  biashara:['💰 Idea za biashara','📊 Tengeneza plan','🛒 Biashara online','📈 Kupata wateja'],
+  mcheshi:['😂 Niambie joke','🎭 Hadithi ya kuchekesha','🗣️ Methali za Kibongo','🎵 Rap fupi'],
+  kocha:['🏋️ Malengo ya leo','💪 Motisha sasa','📅 Ratiba ya siku','🎯 Jinsi ya kufanikisha'],
+  africa:['🌱 Kilimo cha kisasa','📱 Tech Tanzania','💼 Fursa za kazi','🌍 Biashara Afrika'],
+};
+function setPers(el,key){
+  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');pers=key;hist=[];updateHB();renderQP();showToast('Mode: '+el.textContent.trim());
+}
+function renderQP(){
+  document.getElementById('qkRow').innerHTML=(QP[pers]||QP.msaidizi)
+    .map(p=>`<div class="qp" onclick="qSend('${p.replace(/'/g,"&#39;")}')">${p}</div>`).join('');
+}
+
+// ══ CHAT ══
+function initChat(){
+  document.getElementById('msgs').innerHTML='';
+  const name=mem.name||'';
+  const ret=mem.cc>1;
+  let g='';
+  if(ret&&name){
+    g=`Karibu tena <strong>${name}</strong>! 👋 Umefika mara <strong>${mem.cc}</strong>.<br>`;
+    if(mem.lt) g+=`Mara ya mwisho: <em>"${mem.lt}"</em><br><br>`;
+    else g+='<br>';
+  } else {
+    g=`Habari! Mimi ni <strong>LazAI PRO v4</strong> 🇹🇿<br><br><strong>✅ Vitu BURE:</strong><br>💬 Chat AI • 🛠️ Tools 8 • 🎯 Changamoto ya kila siku<br>♟️ Draft vs AI • 🔤 Mchezo wa Neno • 🧮 Kikokotoo<br>💱 Ubadilishaji Fedha • 📝 Daftari • 📖 Methali<br>📊 Takwimu • 🎨 Picha za AI • 🎨 Themes 5<br><br>Uliza chochote! 🚀`;
+  }
+  addBot(g);
+  mem.cc=(mem.cc||0)+1;saveMem();renderQP();updateHB();
+}
+
+async function sendChat(){
+  const ta=document.getElementById('chatTa');
+  const txt=ta.value.trim();
+  if(!txt||busy) return;
+  ta.value='';ta.style.height='auto';
+  addUser(txt);hist.push({role:'user',content:txt});
+  if(hist.length>6) hist=hist.slice(-6);
+  updateHB();await callAI(txt);
+}
+function qSend(txt){document.getElementById('chatTa').value=txt;document.getElementById('chatTa').focus();}
+
+async function callAI(uTxt,sys=null,cb=null){
+  busy=true;
+  if(!cb) document.getElementById('sendBtn').disabled=true;
+  let tp=null;if(!cb) tp=showTyping();
+  let sx='';
+  if(mem.name) sx+=` Mtumiaji: ${mem.name}.`;
+  if(mem.interests) sx+=` Anapenda: ${mem.interests}.`;
+  const s=sys||(PS[pers]+sx);
+  try{
+    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_A},
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:900,temperature:0.75,
+        messages:[{role:'system',content:s},...hist]})
+    });
+    if(tp) tp.remove();
+    if(!r.ok){
+      const e=await r.json().catch(()=>({}));
+      let msg=r.status===429?'⏳ Kikomo! Subiri dakika 1.':r.status===401?'🔑 Tatizo la seva. Wasiliana na msimamizi.':'❌ Hitilafu. Jaribu tena!';
+      if(r.status!==429) hist=hist.slice(-2);
+      if(cb) cb(null,msg);else addBot(msg);
+    } else {
+      const d=await r.json();
+      const reply=d.choices?.[0]?.message?.content||'Samahani, jibu halikupatikana.';
+      if(cb){cb(reply,null);}
+      else{
+        addBot(reply);hist.push({role:'assistant',content:reply});
+        if(hist.length>6) hist=hist.slice(-6);
+        mem.lt=uTxt.slice(0,60);mem.st.ch=(mem.st.ch||0)+1;
+        addPts(5,'💬');
+        mem.logs.unshift({t:uTxt.slice(0,80),d:new Date().toLocaleString('sw-TZ')});
+        mem.logs=mem.logs.slice(0,30);saveMem();
+        const nm=uTxt.match(/jina\s+(?:langu\s+)?(?:ni\s+)?([A-Z][a-z]+)/i);
+        if(nm&&!mem.name){mem.name=nm[1];saveMem();showToast('✅ Nimekukumbuka: '+nm[1]);}
+      }
+    }
+  }catch(e){
+    if(tp) tp.remove();
+    const msg='🌐 Hakuna mtandao! Angalia internet.';
+    if(cb) cb(null,msg);else addBot(msg);
+  }
+  busy=false;if(!cb) document.getElementById('sendBtn').disabled=false;updateHB();
+}
+
+function addUser(txt){
+  const m=document.getElementById('msgs'),d=document.createElement('div');
+  d.className='msg u';
+  d.innerHTML=`<div class="msg-lbl">WEWE</div><div class="bubble">${esc(txt)}</div><div class="msg-t">${nw()}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function addBot(html){
+  const m=document.getElementById('msgs'),d=document.createElement('div');
+  d.className='msg b';
+  d.innerHTML=`<div class="msg-lbl"><span class="bav">L</span>LAZAI PRO</div><div class="bubble">${html}</div><div class="msg-t">${nw()}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function showTyping(){
+  const m=document.getElementById('msgs'),d=document.createElement('div');
+  d.className='msg b';
+  d.innerHTML=`<div class="msg-lbl"><span class="bav">L</span>LAZAI PRO</div><div class="typing-b"><span></span><span></span><span></span></div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;return d;
+}
+function clearHist(){hist=[];updateHB();showToast('✅ Historia imefutwa!');}
+function updateHB(){
+  const n=hist.length,el=document.getElementById('histSt');
+  document.getElementById('histTxt').textContent='Historia: '+Math.floor(n/2);
+  if(n/6>=.9){el.textContent='⚠️ Karibu kikomo';el.style.color='#FF3355';}
+  else if(n/6>=.6){el.textContent='⚡ Wastani';el.style.color='#FFD700';}
+  else{el.textContent='✓ Sawa';el.style.color='#00FF88';}
+}
+
+// ══ TOOLS ══
+const TC={
+  homework:{ic:'📚',n:'Masomo',ph:'Andika swali au mada...',sys:'Wewe ni mwalimu bora wa Tanzania. Saidia mwanafunzi kwa maelezo wazi na mifano. Jibu kwa Kiswahili.'},
+  business:{ic:'💡',n:'Biashara',ph:'Eleza biashara au hali yako...',sys:'Wewe ni mshauri wa biashara Tanzania. Toa idea za vitendo za kipato na hatua za kuanza. Jibu kwa Kiswahili.'},
+  motivation:{ic:'🔥',n:'Motisha',ph:'Eleza hali yako sasa...',sys:'Wewe ni kocha wa maisha Tanzania. Toa maneno ya nguvu na hatua za vitendo. Jibu kwa Kiswahili.'},
+  lyrics:{ic:'🎵',n:'Bongo Lyrics',ph:'Eleza wimbo unaotaka...',sys:'Wewe ni msanii wa Bongo Flava Tanzania. Tengeneza lyrics yenye flow na rhyme. Jibu kwa Kiswahili.'},
+  translate:{ic:'🌍',n:'Tafsiri',ph:'Andika maandishi ya kutafsiri...',sys:'Wewe ni mtafsiri hodari. Tafsiri kwa usahihi ukihifadhi maana.'},
+  cv:{ic:'📄',n:'Barua/CV',ph:'Eleza barua au CV unayotaka...',sys:'Wewe ni mtaalamu wa kuandika nyaraka za kazi Tanzania. Andika kwa kitaalamu kwa Kiswahili.'},
+  poem:{ic:'✍️',n:'Shairi',ph:'Eleza mada ya shairi...',sys:'Wewe ni mshairi bora wa Kiswahili Tanzania. Tengeneza mashairi mazuri yenye mpangilio. Jibu kwa Kiswahili.'},
+  story:{ic:'📖',n:'Hadithi',ph:'Eleza hadithi unayotaka...',sys:'Wewe ni mwandishi wa hadithi za Tanzania. Andika hadithi fupi za kuvutia. Jibu kwa Kiswahili.'},
+};
+function openTool(k){
+  const t=TC[k];
+  document.getElementById('toolsBody').innerHTML=`
+    <button class="t-back" onclick="resetTools()">‹ Rudi Tools</button>
+    <div class="tbox"><div class="tbox-t">${t.ic} ${t.n}</div>
+    <textarea class="t-inp" id="toolInp" placeholder="${t.ph}"></textarea>
+    <button class="t-run" onclick="runTool('${k}')">⚡ ENDESHA</button>
+    <div class="t-res" id="toolRes"></div></div>`;
+}
+function resetTools(){
+  document.getElementById('toolsBody').innerHTML=`
+    <div class="sec-lbl">⚡ AI TOOLS — BURE KABISA</div>
+    <div class="grid2">
+      <div class="card" onclick="openTool('homework')"><span class="card-ic">📚</span><div class="card-n">Masomo</div><div class="card-d">Kazi za nyumbani</div></div>
+      <div class="card" onclick="openTool('business')"><span class="card-ic">💡</span><div class="card-n">Biashara</div><div class="card-d">Ideas Tanzania</div></div>
+      <div class="card" onclick="openTool('motivation')"><span class="card-ic">🔥</span><div class="card-n">Motisha</div><div class="card-d">Maneno ya nguvu</div></div>
+      <div class="card" onclick="openTool('lyrics')"><span class="card-ic">🎵</span><div class="card-n">Bongo Lyrics</div><div class="card-d">Tengeneza wimbo</div></div>
+      <div class="card" onclick="openTool('translate')"><span class="card-ic">🌍</span><div class="card-n">Tafsiri</div><div class="card-d">SW ↔ EN na zaidi</div></div>
+      <div class="card" onclick="openTool('cv')"><span class="card-ic">📄</span><div class="card-n">Barua/CV</div><div class="card-d">Barua za kazi</div></div>
+      <div class="card" onclick="openTool('poem')"><span class="card-ic">✍️</span><div class="card-n">Shairi</div><div class="card-d">Tengeneza shairi</div></div>
+      <div class="card" onclick="openTool('story')"><span class="card-ic">📖</span><div class="card-n">Hadithi</div><div class="card-d">Hadithi za Tanzania</div></div>
+    </div>`;
+}
+async function runTool(k){
+  const inp=document.getElementById('toolInp').value.trim();
+  if(!inp){showToast('⚠️ Andika swali kwanza!');return;}
+  const t=TC[k],btn=document.querySelector('.t-run');
+  btn.textContent='⏳ Inafanya kazi...';btn.disabled=true;
+  const res=document.getElementById('toolRes');res.style.display='block';res.textContent='';
+  const ph=[...hist];hist=[{role:'user',content:inp}];
+  await callAI(inp,t.sys,(reply,err)=>{
+    hist=ph;res.textContent=reply||err||'Hitilafu. Jaribu tena.';
+    if(reply){mem.st.tl=(mem.st.tl||0)+1;addPts(10,'🛠️');saveMem();}
+  });
+  btn.textContent='⚡ ENDESHA';btn.disabled=false;
+}
+
+// ══ DAILY CHALLENGE ══
+const CHS=[
+  {cat:'🧠',q:'Kama una maembe 5 na utoe 2, utabaki na maembe mangapi?',opts:['2','3','4','5'],ans:1,exp:'5−2=3!',pts:20},
+  {cat:'🇹🇿',q:'Mji mkuu rasmi wa Tanzania ni upi?',opts:['Dar es Salaam','Arusha','Dodoma','Mwanza'],ans:2,exp:'Dodoma ndio mji mkuu rasmi!',pts:20},
+  {cat:'🔬',q:'Mwili wa binadamu una mifupa mingapi?',opts:['106','206','306','406'],ans:1,exp:'Mwili wa mtu mzima una mifupa 206!',pts:20},
+  {cat:'💻',q:'AI maana yake nini kwa Kiswahili?',opts:['Akili Asilia','Akili Bandia','Akili Bora','Akili ya Bot'],ans:1,exp:'AI = Akili Bandia!',pts:20},
+  {cat:'🌍',q:'Mlima mrefu zaidi Afrika uko nchini gani?',opts:['Kenya','Ethiopia','Tanzania','Uganda'],ans:2,exp:'Kilimanjaro (5,895m) uko Tanzania!',pts:25},
+  {cat:'🧮',q:'15 × 8 = ?',opts:['100','110','120','130'],ans:2,exp:'15×8=120!',pts:25},
+  {cat:'📚',q:'Tanzania ilipata uhuru mwaka gani?',opts:['1959','1961','1963','1965'],ans:1,exp:'Tanganyika uhuru 9 Desemba 1961!',pts:20},
+  {cat:'🎵',q:'Bongo Flava ni aina gani ya muziki?',opts:['Taarab','Dansi','Hip Hop ya Tanzania','Reggae'],ans:2,exp:'Bongo Flava ni Hip Hop ya Tanzania!',pts:20},
+  {cat:'🔢',q:'Mfululizo: 2, 4, 8, 16, __?',opts:['24','30','32','36'],ans:2,exp:'Kila nambari ×2. 16×2=32!',pts:30},
+  {cat:'🧠',q:'Ninacho kidogo, ukikipata kinakupotea. Ni nini?',opts:['Pesa','Siri','Wakati','Nguvu'],ans:1,exp:'Siri — ukiisema inakupotea!',pts:35},
+  {cat:'🇹🇿',q:'Ziwa kubwa zaidi Afrika kwa eneo ni lipi?',opts:['Tanganyika','Victoria','Malawi','Turkana'],ans:1,exp:'Ziwa Victoria ndilo kubwa zaidi Afrika!',pts:25},
+  {cat:'🔬',q:'Jua ni nyota au sayari?',opts:['Sayari','Nyota','Mwezi','Asteroid'],ans:1,exp:'Jua ni nyota — chanzo cha mwanga na joto!',pts:20},
+  {cat:'🧮',q:'√144 = ?',opts:['10','11','12','13'],ans:2,exp:'√144=12 kwa sababu 12×12=144!',pts:25},
+  {cat:'🌍',q:'Mji mkubwa zaidi Afrika kwa idadi ya watu ni upi?',opts:['Cairo','Lagos','Kinshasa','Johannesburg'],ans:1,exp:'Lagos, Nigeria ndio mji mkubwa Afrika!',pts:25},
+  {cat:'💡',q:'Una ndugu 3. Kila ndugu ana dada mmoja. Wote tuna dada wangapi?',opts:['1','3','4','7'],ans:0,exp:'Dada mmoja — mimi mwenyewe! Wote wanashiriki.',pts:35},
+];
+function getTK(){return new Date().toISOString().slice(0,10);}
+function getCH(){return CHS[new Date().getDate()%CHS.length];}
+function renderChallenge(){
+  const b=document.getElementById('challengeBody'),tk=getTK(),ch=getCH();
+  const done=mem.cd&&mem.cd[tk],streak=mem.cs||0;
+  const dots=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);return `<span class="sdot" style="background:${mem.cd&&mem.cd[k]?'#00FF88':'var(--border)'}"></span>`;}).reverse().join(' ');
+  if(done){
+    b.innerHTML=`<div class="ch-card">
+      <div class="ch-hdr"><span style="font-size:24px">🎯</span><div><div style="font-family:Syne,sans-serif;font-size:13px;font-weight:800;color:var(--text2)">Changamoto ya Leo</div><div style="font-size:9px;color:var(--muted);font-family:Share Tech Mono,monospace">${tk}</div></div><div class="ch-badge">+${ch.pts} PTS</div></div>
+      <div style="text-align:center;padding:16px 0">
+        <div style="font-size:46px;margin-bottom:8px">${done.ok?'🏆':'😔'}</div>
+        <div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:${done.ok?'#FFD700':'#FF3355'}">${done.ok?'Umefaulu! Hongera!':'Umejaribu! Kesho utafaulu!'}</div>
+        <div style="font-size:12px;color:var(--text);margin-top:4px">${done.ok?`+${ch.pts} pointi! 🎉`:'Jibu: '+ch.opts[ch.ans]}</div>
+        <div style="display:flex;gap:5px;justify-content:center;margin-top:12px">${dots}</div>
+        <div style="font-size:9px;color:var(--muted);font-family:Share Tech Mono,monospace;margin-top:4px">🔥 STREAK: ${streak} siku</div>
+      </div></div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px;">
+        <div class="sec-lbl">📊 TAKWIMU ZA CHANGAMOTO</div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;text-align:center"><div style="font-family:Share Tech Mono,monospace;font-size:18px;color:#FFD700;font-weight:900">${Object.keys(mem.cd||{}).length}</div><div style="font-size:8px;color:var(--muted)">SIKU ZILIZOFANYWA</div></div>
+          <div style="flex:1;text-align:center"><div style="font-family:Share Tech Mono,monospace;font-size:18px;color:var(--p);font-weight:900">${streak}</div><div style="font-size:8px;color:var(--muted)">STREAK</div></div>
+          <div style="flex:1;text-align:center"><div style="font-family:Share Tech Mono,monospace;font-size:18px;color:#00FF88;font-weight:900">${Object.values(mem.cd||{}).reduce((a,v)=>a+(v.pts||0),0)}</div><div style="font-size:8px;color:var(--muted)">POINTI ZOTE</div></div>
+        </div>
+      </div>`;
+    return;
+  }
+  b.innerHTML=`<div class="ch-card">
+    <div class="ch-hdr"><span style="font-size:24px">🎯</span><div><div style="font-family:Syne,sans-serif;font-size:13px;font-weight:800;color:var(--text2)">Changamoto ya Leo</div><div style="font-size:9px;color:var(--muted);font-family:Share Tech Mono,monospace">${tk} • ${ch.cat}</div></div><div class="ch-badge">+${ch.pts} PTS</div></div>
+    <div style="display:flex;gap:5px;margin-bottom:10px">${dots}</div>
+    <div class="ch-q">${ch.q}</div>
+    <div class="ch-opts">${ch.opts.map((o,i)=>`<button class="ch-opt" onclick="answerCh(${i})">${o}</button>`).join('')}</div>
+    <div class="ch-res" id="chRes"></div></div>`;
+}
+function answerCh(i){
+  const ch=getCH(),tk=getTK();
+  document.querySelectorAll('.ch-opt').forEach(o=>o.classList.add('disabled'));
+  document.querySelectorAll('.ch-opt')[ch.ans].classList.add('correct');
+  if(i!==ch.ans) document.querySelectorAll('.ch-opt')[i].classList.add('wrong');
+  const ok=i===ch.ans,res=document.getElementById('chRes');
+  res.style.display='block';res.className='ch-res '+(ok?'ok':'fail');
+  res.textContent=ok?`✅ Sahihi! ${ch.exp} +${ch.pts} pointi!`:`❌ Kosa! Sahihi: "${ch.opts[ch.ans]}" — ${ch.exp}`;
+  if(ok){addPts(ch.pts,'🎯 Changamoto!');mem.cs=(mem.cs||0)+1;}else mem.cs=0;
+  if(!mem.cd) mem.cd={};
+  mem.cd[tk]={ok,pts:ok?ch.pts:0};
+  mem.st.cl=(mem.st.cl||0)+1;saveMem();
+  setTimeout(()=>renderChallenge(),1600);
+}
+
+// ══ DRAFT ══
+let bd=[],sel=null,dTurn=1,dOver=false;
+function initDraft(){
+  bd=[];for(let r=0;r<8;r++){bd[r]=[];for(let c=0;c<8;c++){if((r+c)%2===1){if(r<3)bd[r][c]={p:2,k:false};else if(r>4)bd[r][c]={p:1,k:false};else bd[r][c]=null;}else bd[r][c]=null;}}
+  sel=null;dTurn=1;dOver=false;rBoard();dSt('Bonyeza kipande chako chekundu kuanza!');uHud();
+}
+function rBoard(){
+  const g=document.getElementById('board');g.innerHTML='';
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const sq=document.createElement('div');sq.className='sq '+((r+c)%2===0?'lt':'dk');
+    if(sel&&sel[0]===r&&sel[1]===c) sq.classList.add('sel');
+    const cl=bd[r][c];if(cl){const pc=document.createElement('div');pc.className='piece p'+cl.p+(cl.k?' king':'');if(cl.k)pc.textContent='♛';sq.appendChild(pc);}
+    sq.onclick=()=>dClick(r,c);g.appendChild(sq);
+  }
+}
+function dClick(r,c){
+  if(dOver||dTurn!==1) return;
+  const cl=bd[r][c];
+  if(cl&&cl.p===1){sel=[r,c];rBoard();hlM(r,c);}
+  else if(sel){const mv=gMv(sel[0],sel[1]).find(m=>m.to[0]===r&&m.to[1]===c);if(mv){doMv(mv);sel=null;}else{sel=null;rBoard();}}
+}
+function hlM(r,c){const sqs=document.querySelectorAll('.sq');gMv(r,c).forEach(m=>sqs[m.to[0]*8+m.to[1]]?.classList.add('hint'));}
+function gMv(r,c){
+  const cl=bd[r][c];if(!cl) return[];
+  const mv=[],cp=[],dirs=cl.k?[[-1,-1],[-1,1],[1,-1],[1,1]]:cl.p===1?[[-1,-1],[-1,1]]:[[1,-1],[1,1]];
+  const op=cl.p===1?2:1;
+  dirs.forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(inB(nr,nc)){if(!bd[nr][nc])mv.push({from:[r,c],to:[nr,nc],cap:null});else if(bd[nr][nc].p===op){const jr=nr+dr,jc=nc+dc;if(inB(jr,jc)&&!bd[jr][jc])cp.push({from:[r,c],to:[jr,jc],cap:[nr,nc]});}}});
+  return cp.length?cp:mv;
+}
+function aMv(pl){const mv=[],cp=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(bd[r][c]&&bd[r][c].p===pl)gMv(r,c).forEach(m=>{if(m.cap)cp.push(m);else mv.push(m);});return cp.length?cp:mv;}
+function doMv(mv){
+  const[fr,fc]=mv.from,[tr,tc]=mv.to;
+  bd[tr][tc]=bd[fr][fc];bd[fr][fc]=null;
+  if(mv.cap)bd[mv.cap[0]][mv.cap[1]]=null;
+  if(bd[tr][tc].p===1&&tr===0)bd[tr][tc].k=true;
+  if(bd[tr][tc].p===2&&tr===7)bd[tr][tc].k=true;
+  uHud();const w=chkW();
+  if(w){dOver=true;rBoard();if(w===1){dSt('🏆 UMESHINDA! Hongera!');mem.st.gm=(mem.st.gm||0)+1;addPts(30,'♟️ Ushindi!');}else dSt('🤖 AI imeshinda. Jaribu tena!');return;}
+  if(dTurn===1){dTurn=2;dSt('AI inafikiria...');rBoard();setTimeout(aiMv,700);}
+  else{dTurn=1;dSt('Zamu yako!');rBoard();}
+}
+function aiMv(){const mv=aMv(2);if(!mv.length){dOver=true;dSt('🏆 Umeshinda!');addPts(30,'♟️');return;}doMv(mv[Math.floor(Math.random()*mv.length)]);}
+function chkW(){let p1=0,p2=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(bd[r][c]){if(bd[r][c].p===1)p1++;else p2++;}if(!p2)return 1;if(!p1)return 2;return 0;}
+function dHint(){const mv=aMv(1);if(!mv.length){showToast('Huna hatua!');return;}const m=mv[0];const sqs=document.querySelectorAll('.sq');sqs[m.from[0]*8+m.from[1]]?.classList.add('sel');sqs[m.to[0]*8+m.to[1]]?.classList.add('hint');showToast('💡 Sogeza kutoka kipande kilichoangaziwa!');}
+function dSt(t){document.getElementById('dStat').textContent=t;}
+function uHud(){let p1=0,p2=0;for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(bd[r][c]){if(bd[r][c].p===1)p1++;else p2++;}document.getElementById('p1c').textContent=p1;document.getElementById('p2c').textContent=p2;document.getElementById('dhTurn').innerHTML=`<div class="dhb-v">${dTurn===1?'🔴':'🔵'}</div><div class="dhb-l">ZAMU</div>`;document.getElementById('dhP1').classList.toggle('on',dTurn===1);document.getElementById('dhP2').classList.toggle('on',dTurn===2);}
+function inB(r,c){return r>=0&&r<8&&c>=0&&c<8;}
+
+// ══ WORDLE ══
+const WDS=['PAKA','NDEGE','SIMBA','MEZA','KITI','SHULE','BAHARI','MLIMA','MAMA','BABA','RAFIKI','MWANA','ARDHI','GARI','MAJI','DAMU','PIGO','KOPO','DAWA','JIWE'];
+let wW='',wG=[],wCG='',wDone=false,wKS={};
+function initWordle(){wW=WDS[Math.floor(Math.random()*WDS.length)];wG=[];wCG='';wDone=false;wKS={};renderWordle();}
+function renderWordle(){
+  const len=wW.length;
+  let grid='';
+  for(let r=0;r<6;r++){
+    grid+='<div class="word-row">';
+    const g=wG[r]||'';
+    for(let c=0;c<len;c++){
+      let cl='wl',ch=g[c]||'';
+      if(r<wG.length){if(ch===wW[c])cl+=' correct';else if(wW.includes(ch))cl+=' present';else if(ch)cl+=' absent';}
+      else if(r===wG.length&&wCG[c])ch=wCG[c];
+      grid+=`<div class="${cl}">${ch}</div>`;
+    }
+    grid+='</div>';
+  }
+  const rows=[['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['⌫','Z','X','C','V','B','N','M','↵']];
+  let kb='';rows.forEach(row=>{kb+='<div class="wkb-row">';row.forEach(k=>{const cl='wkey'+(['⌫','↵'].includes(k)?' wide':'')+(wKS[k]?' '+wKS[k]:'');kb+=`<button class="${cl}" onclick="wKey('${k}')">${k}</button>`;});kb+='</div>';});
+  const msg=wDone?(wG[wG.length-1]===wW?'🏆 Umefaulu! +20 pointi!':'😔 Jibu: '+wW):'';
+  document.getElementById('wordleBody').innerHTML=`
+    <div class="word-wrap">
+      <div style="font-family:Syne,sans-serif;font-size:14px;font-weight:800;color:var(--text2);letter-spacing:2px">🔤 NADHANI NENO</div>
+      <div style="font-size:9px;color:var(--muted);font-family:Share Tech Mono,monospace">Neno la herufi ${len} • Majaribio ${wG.length}/6</div>
+      <div class="word-grid">${grid}</div>
+      <div class="wword-msg">${msg}</div>
+      <div class="wkb">${kb}</div>
+      ${wDone?`<button onclick="initWordle()" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--p),var(--p2));border:none;border-radius:9px;color:var(--bg);font-family:Syne,sans-serif;font-size:13px;font-weight:800;cursor:pointer;margin-top:8px">🔄 Neno Jipya</button>`:''}
+    </div>`;
+}
+function wKey(k){
+  if(wDone) return;
+  if(k==='⌫'){wCG=wCG.slice(0,-1);renderWordle();return;}
+  if(k==='↵'){
+    if(wCG.length!==wW.length){showToast('Herufi '+wW.length+' zinahitajika!');return;}
+    wG.push(wCG);
+    for(let i=0;i<wCG.length;i++){const c=wCG[i];if(c===wW[i])wKS[c]='correct';else if(wW.includes(c)&&wKS[c]!=='correct')wKS[c]='present';else if(!wW.includes(c))wKS[c]='absent';}
+    if(wCG===wW){wDone=true;addPts(20,'🔤 Neno!');}else if(wG.length>=6)wDone=true;
+    wCG='';renderWordle();return;
+  }
+  if(wCG.length<wW.length){wCG+=k;renderWordle();}
+}
+
+// ══ CALCULATOR ══
+let cExpr='';
+function cInp(v){if(cVal==='0'&&!'+-*/.%'.includes(v))cVal=v;else cVal+=v;document.getElementById('calcVal').textContent=cVal;}
+function cClear(){cVal='0';cExpr='';document.getElementById('calcExpr').textContent='';document.getElementById('calcVal').textContent='0';}
+function cDel(){cVal=cVal.slice(0,-1)||'0';document.getElementById('calcVal').textContent=cVal;}
+function cEquals(){
+  try{
+    document.getElementById('calcExpr').textContent=cVal+' =';
+    const res=Function('"use strict";return ('+cVal.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-')+')')();
+    cVal=String(Math.round(res*1e10)/1e10);
+    document.getElementById('calcVal').textContent=cVal;
+  }catch(e){document.getElementById('calcVal').textContent='Hitilafu';cVal='0';}
+}
+
+// ══ CURRENCY ══
+const CR={TZS:1,USD:2500,KES:19,EUR:2700,GBP:3100,ZAR:135,RWF:2.3,UGX:0.68};
+function calcCurr(){
+  const amt=parseFloat(document.getElementById('currAmt')?.value)||0;
+  const from=document.getElementById('currFrom')?.value||'TZS';
+  const inTZS=amt*CR[from];
+  const rows=[
+    {f:'🇹🇿',n:'Shilingi ya TZ',c:'TZS'},{f:'🇺🇸',n:'Dola ya Marekani',c:'USD'},
+    {f:'🇰🇪',n:'Shilingi ya Kenya',c:'KES'},{f:'🇪🇺',n:'Euro',c:'EUR'},
+    {f:'🇬🇧',n:'Pauni',c:'GBP'},{f:'🇿🇦',n:'Randi',c:'ZAR'},
+    {f:'🇷🇼',n:'Faranga ya Rwanda',c:'RWF'},{f:'🇺🇬',n:'Shilingi ya Uganda',c:'UGX'},
+  ].filter(r=>r.c!==from);
+  const el=document.getElementById('currRes');
+  if(el) el.innerHTML=rows.map(r=>{const v=inTZS/CR[r.c];return `<div class="curr-row"><span style="font-size:16px">${r.f}</span><span style="font-size:12px;color:var(--text);font-weight:600">${r.n}</span><span class="curr-val">${v.toLocaleString('sw-TZ',{maximumFractionDigits:v>1000?0:2})}</span></div>`;}).join('');
+}
+
+// ══ NOTES ══
+function saveNote(){
+  const txt=document.getElementById('noteInp').value.trim();
+  if(!txt){showToast('⚠️ Andika kitu kwanza!');return;}
+  if(!mem.notes) mem.notes=[];
+  mem.notes.unshift({txt,time:new Date().toLocaleString('sw-TZ')});
+  mem.notes=mem.notes.slice(0,50);saveMem();
+  document.getElementById('noteInp').value='';
+  renderNotes();showToast('✅ Imehifadhiwa!');
+}
+function delNote(i){mem.notes.splice(i,1);saveMem();renderNotes();}
+function renderNotes(){
+  const el=document.getElementById('notesList');
+  if(!mem.notes||!mem.notes.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Bado hakuna maelezo.</div>';return;}
+  el.innerHTML=mem.notes.map((n,i)=>`<div class="note-item"><div style="font-size:12px;line-height:1.6;white-space:pre-wrap;color:var(--text2)">${esc(n.txt)}</div><div style="font-size:8px;color:var(--muted);font-family:Share Tech Mono,monospace;margin-top:4px">${n.time}</div><button class="note-del" onclick="delNote(${i})">🗑</button></div>`).join('');
+}
+
+// ══ PROVERBS ══
+const PROVS=[
+  {ic:'🌱',txt:'Haba na haba hujaza kibaba.',mean:'Kidogo kidogo hufikia lengo kubwa. Subira na uvumilivu ndio ufunguo wa mafanikio.'},
+  {ic:'🦁',txt:'Simba mwenda kimya ndiye mwenye nguvu.',mean:'Mtu mwenye nguvu ya kweli hafanyi kelele — matendo yake yanasema.'},
+  {ic:'🌊',txt:'Haraka haraka haina baraka.',mean:'Kufanya mambo kwa haraka bila kufikiria husababisha makosa.'},
+  {ic:'🌳',txt:'Mtoto umleavyo ndivyo akuavyo.',mean:'Malezi ya watoto tangu wakiwa wadogo ndiyo yatakayoamua tabia zao wakubwa.'},
+  {ic:'🤝',txt:'Umoja ni nguvu, utengano ni udhaifu.',mean:'Watu wakiunganika wanaweza kukamilisha mambo makubwa.'},
+  {ic:'🌙',txt:'Usiku wa leo ni asubuhi ya kesho.',mean:'Hali ngumu ya sasa itapita na siku njema zitakuja. Usikate tamaa.'},
+  {ic:'💧',txt:'Mti hauna nguvu bila mizizi.',mean:'Mtu hana nguvu bila familia, makundi na asili yake.'},
+  {ic:'🔥',txt:'Mchezaji na motoni huchomwa.',mean:'Ukijifurahisha na hatari au watu wabaya utaumia.'},
+  {ic:'🐦',txt:'Ndege mwenye njaa anaruka mapema.',mean:'Mtu anayetaka kufanikiwa lazima aamke mapema na afanye kazi kwa bidii.'},
+  {ic:'⭐',txt:'Nyota haiangazi mchana.',mean:'Kila kitu kina wakati wake. Subiri wakati wako ufike.'},
+  {ic:'🌿',txt:'Usione vibaya kwa mtu, vibaya vinajibu.',mean:'Wema unazotoa ndio utakaorudi kwako. Tenda wema daima.'},
+  {ic:'🏔️',txt:'Mlima hauendi kwa mlima, bali binadamu ndiye mwenye kwenda.',mean:'Matatizo hayaendi kwako — wewe lazima uende kupigana nazo.'},
+];
+let pIdx=new Date().getDate()%PROVS.length;
+function renderProv(){
+  const p=PROVS[pIdx];
+  document.getElementById('provBody').innerHTML=`
+    <div class="prov-card">
+      <div style="font-size:40px;margin-bottom:8px">${p.ic}</div>
+      <div class="prov-txt">"${p.txt}"</div>
+      <div class="prov-mean">${p.mean}</div>
+      <button onclick="nextProv()" style="width:100%;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:9px;color:var(--p);font-family:Syne,sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-top:10px">📖 Methali Nyingine</button>
+    </div>
+    <button onclick="shareProv()" class="share-wa">📲 SHIRIKI WHATSAPP</button>`;
+}
+function nextProv(){pIdx=(pIdx+1)%PROVS.length;renderProv();}
+function shareProv(){const p=PROVS[pIdx];window.open('https://wa.me/?text='+encodeURIComponent(`📖 *Methali ya Leo*\n\n${p.ic} _"${p.txt}"_\n\n💡 Maana: ${p.mean}\n\n🇹🇿 _Kutoka LazAI PRO — by Lazaro John Mkalagale_`),'_blank');}
+
+// ══ STATS ══
+function renderStats(){
+  const s=mem.st||{},chDone=Object.keys(mem.cd||{}).length;
+  const chPts=Object.values(mem.cd||{}).reduce((a,v)=>a+(v.pts||0),0);
+  document.getElementById('statsBody').innerHTML=`
+    <div class="sec-lbl">📊 TAKWIMU ZANGU</div>
+    <div class="stats-grid">
+      <div class="stat-box"><span class="stat-v">${pts}</span><span class="stat-l">🏆 POINTI ZOTE</span></div>
+      <div class="stat-box"><span class="stat-v">${s.ch||0}</span><span class="stat-l">💬 MAZUNGUMZO</span></div>
+      <div class="stat-box"><span class="stat-v">${s.tl||0}</span><span class="stat-l">🛠️ TOOLS</span></div>
+      <div class="stat-box"><span class="stat-v">${chDone}</span><span class="stat-l">🎯 CHANGAMOTO</span></div>
+      <div class="stat-box"><span class="stat-v">${s.gm||0}</span><span class="stat-l">♟️ MICHEZO</span></div>
+      <div class="stat-box"><span class="stat-v">${mem.cs||0}</span><span class="stat-l">🔥 STREAK</span></div>
+    </div>
+    <button class="share-wa" onclick="shareStats()">📲 SHIRIKI WHATSAPP</button>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px">
+      <div class="sec-lbl">📜 MAZUNGUMZO YA HIVI KARIBUNI</div>
+      ${(mem.logs||[]).slice(0,5).map(l=>`<div style="font-size:11px;color:var(--text);padding:6px 0;border-bottom:1px solid var(--border)">${esc(l.t)}<div style="font-size:8px;color:var(--muted);font-family:Share Tech Mono,monospace;margin-top:2px">${l.d}</div></div>`).join('')||'<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px">Bado hakuna mazungumzo</div>'}
+    </div>`;
+}
+function shareStats(){
+  const name=mem.name||'Mtumiaji';
+  window.open('https://wa.me/?text='+encodeURIComponent(`🏆 *TAKWIMU ZANGU — LazAI PRO*\n\n👤 ${name}\n⭐ Pointi: *${pts}*\n💬 Mazungumzo: ${mem.st?.ch||0}\n🎯 Changamoto: ${Object.keys(mem.cd||{}).length}\n🔥 Streak: ${mem.cs||0} siku\n♟️ Michezo: ${mem.st?.gm||0}\n\n🤖 Jaribu LazAI PRO!\n🇹🇿 by Lazaro John Mkalagale`),'_blank');
+}
+
+// ══ IMAGE ══
+function selSt(el,val){document.querySelectorAll('.sp').forEach(p=>p.classList.remove('on'));el.classList.add('on');imgSt=val;}
+function genImg(){
+  const p=document.getElementById('imgTa').value.trim();
+  if(!p){showToast('⚠️ Andika maelezo kwanza!');return;}
+  const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(imgSt+p+', high quality, 4k')}?width=512&height=512&nologo=true&seed=${Date.now()}`;
+  const out=document.getElementById('imgOut');
+  out.innerHTML=`<div class="img-ph"><span style="font-size:34px;display:block;margin-bottom:5px">⏳</span><span style="font-size:12px">Inatengeneza... subiri sekunde 20-40</span></div>`;
+  setTimeout(()=>{
+    out.innerHTML=`<img src="${url}" alt="picha" onload="mem.st.im=(mem.st.im||0)+1;addPts(15,'🎨');saveMem()" onerror="this.parentElement.innerHTML='<div class=img-ph><span style=font-size:34px>❌</span><br><span style=font-size:12px;color:#FF3355>Imeshindwa. Jaribu tena!</span></div>'">
+    <div style="font-size:9px;color:var(--muted);text-align:center;margin-top:5px;font-family:Share Tech Mono,monospace">Bonyeza & shikilia picha kuihifadhi</div>`;
+  },2000);
+}
+
+// ══ MEMORY FIELDS ══
+function renderMem(){
+  const flds=[{k:'name',ic:'👤',l:'Jina'},{k:'location',ic:'📍',l:'Mahali'},{k:'interests',ic:'❤️',l:'Mapenzi'},{k:'goal',ic:'🎯',l:'Lengo'}];
+  document.getElementById('memFields').innerHTML=flds.map(f=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 12px;margin-bottom:5px;display:flex;align-items:center;gap:9px">
+      <span style="font-size:14px">${f.ic}</span>
+      <div style="flex:1"><div style="font-size:9px;color:var(--muted);font-family:Share Tech Mono,monospace">${f.l.toUpperCase()}</div><div style="font-size:13px;color:var(--text2);font-weight:600">${esc(mem[f.k]||'Haijawekwa')}</div></div>
+      <button onclick="editMem('${f.k}','${f.l}')" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer">✏️</button>
+    </div>`).join('');
+}
+function editMem(k,l){const v=prompt('Badilisha '+l+':',mem[k]||'');if(v!==null&&v.trim()){mem[k]=v.trim();saveMem();renderMem();showToast('✅ Imehifadhiwa!');}}
+function clearAll(){if(confirm('Una uhakika? Data yote itafutwa!')){localStorage.clear();location.reload();}}
+
+// ══ VOICE ══
+function toggleVoice(){
+  if(voiceOn){stopVoice();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('⚠️ Tumia Chrome kwa voice mode!');return;}
+  rec=new SR();rec.lang='sw-TZ';rec.continuous=false;rec.interimResults=true;
+  voiceOn=true;document.getElementById('voiceBtn').classList.add('on');document.getElementById('voOvl').classList.add('show');
+  rec.onresult=e=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;document.getElementById('voTxt').textContent='Umesema: "'+t+'"';if(e.results[e.results.length-1].isFinal){stopVoice();document.getElementById('chatTa').value=t;sendChat();}};
+  rec.onerror=e=>{stopVoice();showToast('⚠️ Hitilafu: '+e.error);};
+  rec.onend=()=>{if(voiceOn)stopVoice();};
+  rec.start();
+}
+function stopVoice(){voiceOn=false;document.getElementById('voiceBtn').classList.remove('on');document.getElementById('voOvl').classList.remove('show');if(rec){try{rec.stop();}catch(e){}rec=null;}}
+
+// ══ UTILS ══
+function nw(){return new Date().toLocaleTimeString('sw-TZ',{hour:'2-digit',minute:'2-digit'});}
+function autoH(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,72)+'px';}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+let tT;function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ══ PWA SERVICE WORKER ══
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(r=>console.log('SW registered'))
+      .catch(e=>console.log('SW error',e));
+  });
+}
+
+// ══ PWA INSTALL PROMPT ══
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  // Show install button after unlock
+  setTimeout(()=>{
+    const btn=document.createElement('button');
+    btn.id='installBtn';
+    btn.innerHTML='📲 Sakinisha kama App';
+    btn.style.cssText='position:fixed;bottom:70px;right:12px;z-index:400;padding:8px 14px;background:linear-gradient(135deg,#00F5CC,#0099FF);border:none;border-radius:20px;color:#030810;font-family:Syne,sans-serif;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(0,245,204,0.3);animation:lp 2s infinite;';
+    btn.onclick=()=>{
+      btn.remove();
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(c=>{
+        if(c.outcome==='accepted') showToast('✅ LazAI PRO imesakinishwa!');
+        deferredPrompt=null;
+      });
+    };
+    document.body.appendChild(btn);
+  },3000);
+});
+
+window.addEventListener('appinstalled',()=>{
+  showToast('🎉 LazAI PRO imesakinishwa kama App!');
+  document.getElementById('installBtn')?.remove();
+});
+</script>
+</body>
+</html>
