@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LazAI Pro - by Lazaro John Mkalagale</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #00FFCC;
+    --secondary: #0066FF;
+    --dark: #020810;
+    --card: #060F1A;
+    --border: #0A2040;
+    --text: #B0D4F0;
+    --muted: #3A6080;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--dark); color: var(--text); font-family: 'Exo 2', sans-serif; min-height: 100vh; overflow: hidden; }
+
+  .robot-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.06; display: flex; align-items: center; justify-content: center; }
+  .circuit { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px); background-size: 50px 50px; }
+  .particle { position: fixed; border-radius: 50%; pointer-events: none; animation: floatUp linear infinite; z-index: 0; }
+  @keyframes floatUp { 0% { transform: translateY(100vh); opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.3; } 100% { transform: translateY(-50px); opacity: 0; } }
+
+  /* PASSWORD SCREEN */
+  #passScreen { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(2,8,16,0.98); }
+  .pass-box { width: 100%; max-width: 360px; background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 32px 22px; text-align: center; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .pass-logo { width: 80px; height: 80px; border-radius: 22px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; font-family: 'Share Tech Mono', monospace; color: #020810; margin: 0 auto 16px; box-shadow: 0 0 40px rgba(0,255,204,0.5); animation: logoPulse 2s ease-in-out infinite; }
+  @keyframes logoPulse { 0%,100% { box-shadow: 0 0 30px rgba(0,255,204,0.4); } 50% { box-shadow: 0 0 60px rgba(0,255,204,0.9); } }
+  .pass-title { font-size: 28px; font-weight: 900; letter-spacing: 3px; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 4px; }
+  .pass-sub { font-size: 10px; color: var(--muted); font-family: 'Share Tech Mono', monospace; letter-spacing: 1px; margin-bottom: 8px; }
+  .pass-badge { font-size: 11px; color: var(--primary); margin-bottom: 24px; background: rgba(0,255,204,0.06); border: 1px solid rgba(0,255,204,0.2); border-radius: 8px; padding: 6px 12px; display: inline-block; }
+  .pass-label { font-size: 11px; color: var(--primary); font-family: 'Share Tech Mono', monospace; text-align: left; margin-bottom: 8px; }
+  .pass-wrap { position: relative; margin-bottom: 16px; }
+  .pass-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 12px; padding: 14px 44px 14px 16px; color: #fff; font-size: 14px; font-family: 'Share Tech Mono', monospace; outline: none; transition: border-color 0.2s; letter-spacing: 2px; }
+  .pass-input:focus { border-color: rgba(0,255,204,0.5); }
+  .pass-input::placeholder { color: var(--muted); letter-spacing: 1px; font-size: 12px; }
+  .show-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; }
+  .pass-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; border-radius: 14px; color: #020810; font-size: 16px; font-weight: 800; font-family: 'Exo 2', sans-serif; cursor: pointer; letter-spacing: 2px; box-shadow: 0 4px 20px rgba(0,255,204,0.3); transition: all 0.2s; }
+  .pass-btn:active { transform: scale(0.97); }
+  .pass-error { color: #FF4444; font-size: 12px; font-family: 'Share Tech Mono', monospace; margin-top: 10px; display: none; animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+  .pass-attempts { color: var(--muted); font-size: 10px; font-family: 'Share Tech Mono', monospace; margin-top: 8px; }
+
+  /* MAIN APP */
+  #mainApp { position: relative; z-index: 1; max-width: 440px; margin: 0 auto; height: 100vh; display: none; flex-direction: column; }
+
+  header { padding: 12px 16px; background: rgba(2,8,16,0.92); backdrop-filter: blur(30px); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; flex-shrink: 0; }
+  header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent); animation: scan 3s linear infinite; }
+  @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+  .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .logo-ring { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; font-family: 'Share Tech Mono', monospace; color: #020810; flex-shrink: 0; animation: logoPulse 3s ease-in-out infinite; }
+  .logo-text-big { font-size: 20px; font-weight: 900; letter-spacing: 2px; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header-sub { font-size: 9px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+  .header-right { margin-left: auto; text-align: right; }
+  .online-badge { display: flex; align-items: center; gap: 4px; font-size: 9px; font-family: 'Share Tech Mono', monospace; color: var(--primary); justify-content: flex-end; }
+  .online-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--primary); animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .pro-badge { font-size: 9px; color: #FFD700; font-family: 'Share Tech Mono', monospace; }
+  .stats-bar { display: flex; background: rgba(10,32,64,0.5); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+  .stat { flex: 1; padding: 4px 6px; text-align: center; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-val { color: var(--primary); font-size: 11px; font-weight: 700; display: block; font-family: 'Share Tech Mono', monospace; }
+  .stat-label { color: var(--muted); font-size: 7px; font-family: 'Share Tech Mono', monospace; }
+
+  .chat-area { flex: 1; padding: 12px 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .chat-area::-webkit-scrollbar { width: 2px; }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .message { display: flex; gap: 8px; animation: msgIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: none; } }
+  .message.user { flex-direction: row-reverse; }
+  .avatar { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; font-family: 'Share Tech Mono', monospace; flex-shrink: 0; margin-top: 4px; }
+  .avatar.ai { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #020810; }
+  .avatar.user { background: rgba(0,102,255,0.15); border: 1px solid rgba(0,102,255,0.3); color: #4488FF; }
+  .bubble { max-width: 78%; padding: 9px 13px; border-radius: 14px; font-size: 13px; line-height: 1.65; }
+  .message.ai .bubble { background: rgba(6,15,26,0.95); border: 1px solid var(--border); border-top-left-radius: 4px; }
+  .message.user .bubble { background: rgba(0,40,100,0.6); border: 1px solid rgba(0,102,255,0.3); border-top-right-radius: 4px; color: #D0E8FF; }
+  .msg-label { font-size: 8px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1.5px; margin-bottom: 4px; text-transform: uppercase; }
+  .ai-label { color: var(--primary); }
+  .user-label { color: #4488FF; text-align: right; }
+  .msg-time { font-size: 8px; color: var(--muted); font-family: 'Share Tech Mono', monospace; margin-top: 4px; text-align: right; }
+
+  .gen-image { max-width: 100%; border-radius: 10px; margin-top: 8px; border: 1px solid var(--border); display: block; }
+  .img-loading { color: var(--primary); font-size: 11px; font-family: 'Share Tech Mono', monospace; margin-top: 6px; }
+
+  .typing-bubble { background: rgba(6,15,26,0.95); border: 1px solid var(--border); border-radius: 14px; border-top-left-radius: 4px; padding: 12px 15px; display: flex; gap: 5px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); animation: dotBounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; background: #00AAFF; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dotBounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-7px);opacity:1} }
+
+  .quick-wrap { padding: 0 14px 6px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
+  .quick-wrap::-webkit-scrollbar { display: none; }
+  .qbtn { white-space: nowrap; padding: 6px 12px; background: rgba(10,32,64,0.8); border: 1px solid var(--border); border-radius: 18px; color: var(--text); font-size: 10px; font-family: 'Exo 2', sans-serif; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+  .qbtn:active { background: rgba(0,255,204,0.1); border-color: rgba(0,255,204,0.4); color: var(--primary); }
+
+  .input-area { padding: 8px 14px 16px; background: rgba(2,8,16,0.95); backdrop-filter: blur(30px); border-top: 1px solid var(--border); flex-shrink: 0; }
+  .mode-bar { display: flex; gap: 6px; margin-bottom: 8px; }
+  .mode-btn { flex: 1; padding: 6px 4px; background: rgba(10,32,64,0.6); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 10px; font-family: 'Share Tech Mono', monospace; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .mode-btn.active { background: rgba(0,255,204,0.1); border-color: rgba(0,255,204,0.4); color: var(--primary); }
+  .input-row { display: flex; gap: 8px; align-items: flex-end; }
+  .input-box { flex: 1; background: rgba(10,32,64,0.6); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; color: #fff; font-size: 13px; font-family: 'Exo 2', sans-serif; outline: none; resize: none; min-height: 42px; max-height: 100px; line-height: 1.5; transition: border-color 0.2s; }
+  .input-box::placeholder { color: var(--muted); font-size: 12px; }
+  .input-box:focus { border-color: rgba(0,255,204,0.3); }
+  .send-btn { width: 42px; height: 42px; border-radius: 11px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; transition: transform 0.15s; }
+  .send-btn:active { transform: scale(0.92); }
+  .footer { text-align: center; padding: 4px; font-size: 8px; font-family: 'Share Tech Mono', monospace; color: var(--border); letter-spacing: 2px; flex-shrink: 0; }
+  .footer span { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="robot-bg">
+  <svg viewBox="0 0 800 900" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+    <rect x="280" y="120" width="240" height="200" rx="30" fill="none" stroke="#00FFCC" stroke-width="3"/>
+    <rect x="315" y="175" width="70" height="50" rx="10" fill="none" stroke="#00FFCC" stroke-width="2.5"/>
+    <rect x="415" y="175" width="70" height="50" rx="10" fill="none" stroke="#00FFCC" stroke-width="2.5"/>
+    <circle cx="350" cy="200" r="18" fill="#00FFCC" opacity="0.2"/>
+    <circle cx="450" cy="200" r="18" fill="#00FFCC" opacity="0.2"/>
+    <circle cx="350" cy="200" r="8" fill="#00FFCC"/>
+    <circle cx="450" cy="200" r="8" fill="#00FFCC"/>
+    <rect x="310" y="265" width="180" height="30" rx="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <line x1="350" y1="120" x2="330" y2="70" stroke="#00FFCC" stroke-width="2"/>
+    <circle cx="330" cy="65" r="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <line x1="450" y1="120" x2="470" y2="70" stroke="#00FFCC" stroke-width="2"/>
+    <circle cx="470" cy="65" r="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="245" y="155" width="35" height="60" rx="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="520" y="155" width="35" height="60" rx="8" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="230" y="360" width="340" height="260" rx="20" fill="none" stroke="#00FFCC" stroke-width="3"/>
+    <rect x="130" y="370" width="95" height="200" rx="20" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="575" y="370" width="95" height="200" rx="20" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="295" y="620" width="90" height="180" rx="15" fill="none" stroke="#00FFCC" stroke-width="2"/>
+    <rect x="415" y="620" width="90" height="180" rx="15" fill="none" stroke="#00FFCC" stroke-width="2"/>
+  </svg>
+</div>
+<div class="circuit"></div>
+<div id="particles"></div>
+
+<!-- PASSWORD SCREEN -->
+<div id="passScreen">
+  <div class="pass-box">
+    <div class="pass-logo">LazAI</div>
+    <div class="pass-title">LazAI</div>
+    <div class="pass-sub">BY LAZARO JOHN MKALAGALE</div>
+    <div class="pass-badge">🌐 Chat • 🔍 Tafuta • 🎨 Picha</div>
+    <div class="pass-label">🔐 WEKA PASSWORD:</div>
+    <div class="pass-wrap">
+      <input type="password" class="pass-input" id="passInput" placeholder="Weka password yako..." onkeydown="if(event.key==='Enter') checkPass()"/>
+      <button class="show-btn" onclick="togglePass()">👁️</button>
+    </div>
+    <button class="pass-btn" onclick="checkPass()">🚀 INGIA LAZAI</button>
+    <div class="pass-error" id="passError">❌ Password si sahihi! Jaribu tena.</div>
+    <div class="pass-attempts" id="attemptsLeft"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+  <header>
+    <div class="header-top">
+      <div class="logo-ring">LazAI</div>
+      <div>
+        <div class="logo-text-big">LazAI <span style="font-size:12px;color:#FFD700;">PRO</span></div>
+        <div class="header-sub">by Lazaro John Mkalagale 🇹🇿</div>
+      </div>
+      <div class="header-right">
+        <div class="online-badge"><div class="online-dot"></div>ONLINE</div>
+        <div class="pro-badge">⚡ GROQ POWERED</div>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="msgCount">0</span><span class="stat-label">MAZUNGUMZO</span></div>
+      <div class="stat"><span class="stat-val">24/7</span><span class="stat-label">HUDUMA</span></div>
+      <div class="stat"><span class="stat-val">🔍</span><span class="stat-label">TAFUTA</span></div>
+      <div class="stat"><span class="stat-val">🎨</span><span class="stat-label">PICHA</span></div>
+    </div>
+  </header>
+
+  <div class="chat-area" id="chatArea">
+    <div class="message ai">
+      <div class="avatar ai">LAZ</div>
+      <div class="bubble">
+        <div class="msg-label ai-label">LAZAI PRO</div>
+        Karibu! Mimi ni <strong>LazAI Pro</strong> — msaidizi wako wa AI wa hali ya juu! 🤖⚡<br><br>
+        Ninaweza:<br>
+        🗣️ <strong>Kuzungumza</strong> — maswali yoyote<br>
+        🔍 <strong>Kutafuta</strong> — habari za sasa mtandaoni<br>
+        🎨 <strong>Kutengeneza picha</strong> — andika unataka nini!<br><br>
+        Nilioundwa na <strong>Lazaro John Mkalagale</strong> 🇹🇿
+        <div class="msg-time" id="welcomeTime"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-wrap">
+    <button class="qbtn" onclick="setMode('chat');sendQuick('Habari za Tanzania leo')">🇹🇿 Habari</button>
+    <button class="qbtn" onclick="setMode('search');sendQuick('habari za leo Tanzania')">🔍 Tafuta</button>
+    <button class="qbtn" onclick="setMode('image');sendQuick('beautiful Tanzania landscape Kilimanjaro sunset')">🎨 Picha</button>
+    <button class="qbtn" onclick="setMode('chat');sendQuick('Nisaidie na biashara yangu')">💼 Biashara</button>
+    <button class="qbtn" onclick="setMode('chat');sendQuick('Tafsiri kwa Kiingereza: Habari ya asubuhi')">🌐 Tafsiri</button>
+    <button class="qbtn" onclick="setMode('image');sendQuick('professional logo design for Tanzania business')">🖼️ Logo</button>
+  </div>
+
+  <div class="input-area">
+    <div class="mode-bar">
+      <button class="mode-btn active" id="btn-chat" onclick="setMode('chat')">🗣️ CHAT</button>
+      <button class="mode-btn" id="btn-search" onclick="setMode('search')">🔍 TAFUTA</button>
+      <button class="mode-btn" id="btn-image" onclick="setMode('image')">🎨 PICHA</button>
+    </div>
+    <div class="input-row">
+      <textarea class="input-box" id="userInput" placeholder="Uliza LazAI chochote..." rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+  <div class="footer">LAZAI PRO v3.0 • <span>LAZARO JOHN MKALAGALE</span> • 🇹🇿</div>
+</div>
+
+<script>
+// ============================================
+// BADILISHA HAPA TU — MSTARI 2 TU!
+const GROQ_API_KEY = 'WEKA_GROQ_KEY_YAKO_HAPA';
+const APP_PASSWORD = 'WEKA_PASSWORD_YAKO_HAPA';
+// ============================================
+
+let isTyping = false;
+let msgCount = 0;
+let currentMode = 'chat';
+let attempts = 3;
+const history = [];
+
+// Particles
+(function(){
+  const c = document.getElementById('particles');
+  for(let i=0;i<14;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const s = Math.random()*3+2;
+    const cols = ['#00FFCC','#0066FF','#00AAFF'];
+    p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*3)]};animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*8}s;`;
+    c.appendChild(p);
+  }
+})();
+
+document.getElementById('welcomeTime').textContent = getTime();
+
+function getTime(){
+  return new Date().toLocaleTimeString('sw-TZ',{hour:'2-digit',minute:'2-digit'});
+}
+
+function togglePass(){
+  const i = document.getElementById('passInput');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+function checkPass(){
+  const val = document.getElementById('passInput').value;
+  const err = document.getElementById('passError');
+  const att = document.getElementById('attemptsLeft');
+  if(val === APP_PASSWORD){
+    document.getElementById('passScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'flex';
+  } else {
+    attempts--;
+    err.style.display = 'block';
+    if(attempts > 0){
+      att.textContent = `Majaribio yaliyobaki: ${attempts}`;
+    } else {
+      att.textContent = 'Imefungwa! Refresh ukurasa.';
+      document.getElementById('passInput').disabled = true;
+      document.querySelector('.pass-btn').disabled = true;
+    }
+  }
+}
+
+function setMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-${mode}`).classList.add('active');
+  const box = document.getElementById('userInput');
+  const placeholders = {
+    chat: 'Uliza LazAI chochote...',
+    search: 'Tafuta habari za sasa... (mfano: habari Tanzania leo)',
+    image: 'Eleza picha unayotaka... (kwa Kiingereza ni bora)'
+  };
+  box.placeholder = placeholders[mode];
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,100)+'px';
+}
+
+function handleKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+}
+
+function sendQuick(text){
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
+
+async function sendMessage(){
+  if(isTyping) return;
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  addMessage('user', text);
+  showTyping();
+  isTyping = true;
+
+  try {
+    if(currentMode === 'image'){
+      await generateImage(text);
+    } else if(currentMode === 'search'){
+      await searchAndAnswer(text);
+    } else {
+      history.push({role:'user', content:text});
+      const reply = await callGroq(history);
+      hideTyping();
+      history.push({role:'assistant', content:reply});
+      addMessage('ai', reply);
+    }
+    msgCount++;
+    document.getElementById('msgCount').textContent = msgCount;
+  } catch(e) {
+    hideTyping();
+    addMessage('ai', 'Samahani, kuna tatizo kidogo. Jaribu tena! 🙏');
+  }
+  isTyping = false;
+}
+
+// GROQ CHAT
+async function callGroq(messages){
+  const fullMessages = [
+    {role:'system', content:'Wewe ni LazAI Pro — msaidizi wa AI uliotengenezwa na Lazaro John Mkalagale kutoka Tanzania. Daima jibu kwa Kiswahili safi na wazi isipokuwa ukiombwa lugha nyingine. Uwe wa kusaidia, wa kirafiki na wa kitaalamu. Jitambulishe kama LazAI ukiulizwa. Tumia emoji kidogo. Jibu kwa ufupi lakini kamili.'},
+    ...messages.slice(-12)
+  ];
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${GROQ_API_KEY}`},
+    body:JSON.stringify({model:'llama-3.3-70b-versatile', max_tokens:1000, messages:fullMessages})
+  });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.choices[0].message.content;
+}
+
+// WEB SEARCH using DuckDuckGo
+async function searchAndAnswer(query){
+  try {
+    // Fetch search results via DuckDuckGo Instant Answer API
+    const searchUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
+    const res = await fetch(searchUrl);
+    const data = await res.json();
+
+    let searchContext = '';
+    if(data.AbstractText) searchContext += data.AbstractText + '\n';
+    if(data.Answer) searchContext += 'Jibu: ' + data.Answer + '\n';
+    if(data.RelatedTopics && data.RelatedTopics.length > 0){
+      data.RelatedTopics.slice(0,5).forEach(t => {
+        if(t.Text) searchContext += '• ' + t.Text + '\n';
+      });
+    }
+
+    if(!searchContext){
+      searchContext = `Hakuna matokeo ya moja kwa moja kwa: "${query}". Toa jibu kulingana na maarifa yako.`;
+    }
+
+    const messages = [{
+      role:'user',
+      content:`Mtumiaji anatafuta: "${query}"\n\nMatokeo ya utafutaji:\n${searchContext}\n\nToa jibu fupi na la kuelewa kwa Kiswahili kulingana na taarifa hii. Kama taarifa haitoshi, sema hivyo na toa maarifa yako.`
+    }];
+
+    const reply = await callGroq(messages);
+    hideTyping();
+    addMessage('ai', `🔍 <strong>Matokeo ya Utafutaji:</strong><br><br>${reply}`);
+  } catch(e) {
+    hideTyping();
+    // Fallback to Groq knowledge
+    const messages = [{role:'user', content:`Tafuta na niambie kuhusu: ${query}. Jibu kwa Kiswahili.`}];
+    const reply = await callGroq(messages);
+    addMessage('ai', `🔍 <strong>Kulingana na maarifa yangu:</strong><br><br>${reply}`);
+  }
+}
+
+// IMAGE GENERATION using Pollinations AI (free, no key needed)
+async function generateImage(prompt){
+  hideTyping();
+  const encodedPrompt = encodeURIComponent(prompt + ', high quality, detailed, beautiful, 4k');
+  const seed = Math.floor(Math.random() * 99999);
+  const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true&seed=${seed}`;
+
+  const chat = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'message ai';
+  div.innerHTML = `
+    <div class="avatar ai">LAZ</div>
+    <div class="bubble">
+      <div class="msg-label ai-label">LAZAI PRO</div>
+      🎨 <strong>Ninatengeneza picha yako...</strong><br>
+      <small style="color:var(--muted)">⏳ Subiri sekunde 15-30...</small><br>
+      <img src="${imageUrl}" class="gen-image" alt="picha" 
+        onload="this.previousElementSibling.textContent='✅ Picha iko tayari!';this.parentElement.parentElement.parentElement.scrollTop=99999;"
+        onerror="this.style.display='none';this.previousElementSibling.textContent='❌ Jaribu tena kwa maelezo ya Kiingereza!'"/>
+      <div class="msg-time">${getTime()}</div>
+    </div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addMessage(type, text){
+  const chat = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = `message ${type}`;
+  div.innerHTML = `
+    <div class="avatar ${type}">${type==='ai'?'LAZ':'YOU'}</div>
+    <div class="bubble">
+      <div class="msg-label ${type==='ai'?'ai-label':'user-label'}">${type==='ai'?'LAZAI PRO':'WEWE'}</div>
+      ${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}
+      <div class="msg-time">${getTime()}</div>
+    </div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showTyping(){
+  const chat = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'message ai';
+  div.id = 'typing';
+  div.innerHTML = `<div class="avatar ai">LAZ</div><div class="typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function hideTyping(){
+  const t = document.getElementById('typing');
+  if(t) t.remove();
+}
+</script>
+</body>
+</html>
